@@ -17,8 +17,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".Frontend.CategoriaActivity"
+            android:name=".Frontend.PreguntaActivity"
             android:exported="false" />
+        <activity
+            android:name=".Frontend.CategoriaActivity"
+            android:exported="true" />
         <activity
             android:name=".Frontend.EditarContraActivity"
             android:exported="false" />

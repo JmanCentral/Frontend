@@ -50,7 +50,7 @@ public class MenuActivity extends AppCompatActivity {
 
     public void startQuiz(View view) {
         // Iniciar la actividad QuizActivity
-        Intent intent = new Intent(this, QuizActivity.class);
+        Intent intent = new Intent(this, CategoriaActivity.class);
         startActivity(intent);
 
     }

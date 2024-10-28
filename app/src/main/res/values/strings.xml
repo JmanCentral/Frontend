@@ -13,4 +13,11 @@
     <string name="fecha"><font fgcolor='#000000'>Fecha : </font>  <font fgcolor='#689F38'>%s</font> </string>
     <string name="tiempo"><font fgcolor='#000000'>Tiempo : </font>  <font fgcolor='#689F38'>%s</font> </string>
 
+
+        <string-array name="difficulty_options">
+            <item>Fácil</item>
+            <item>Intermedio</item>
+            <item>Difícil</item>
+        </string-array>
+
 </resources>
