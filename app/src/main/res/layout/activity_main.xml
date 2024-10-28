@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".Frontend.MainActivity">
+
+    <!-- Imagen Principal al Inicio -->
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:contentDescription="image"
+        android:src="@drawable/trivia" />
+
+    <!-- Campo de Usuario -->
+    <LinearLayout
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/input_field_background"
+        android:gravity="center">
+
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:height="50dp"
+            android:background="@android:color/transparent"
+            android:backgroundTint="@null"
+            android:hint="Username"
+            android:maxLines="1"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <!-- Campo de Contraseña -->
+    <LinearLayout
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/input_field_background"
+        android:gravity="center">
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:background="@android:color/transparent"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <!-- Botón de Login -->
+    <Button
+        android:id="@+id/loginBtn"
+        android:layout_width="320dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="50dp"
+        android:backgroundTint="@color/orange"
+        android:onClick="login"
+        android:text="LOGIN"
+        android:textSize="15sp" />
+
+    <!-- Botón de Salida -->
+    <Button
+        android:id="@+id/exitBtn"
+        android:layout_width="320dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/orange"
+        android:text="EXIT"
+        android:textSize="15sp" />
+
+    <!-- Sección de Registro -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:onClick="registro"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Don't have an account ?" />
+
+        <TextView
+            android:id="@+id/signUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:paddingTop="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp"
+            android:text="Registrate"
+            android:textColor="@color/orange" />
+
+    </LinearLayout>
+
+</LinearLayout>

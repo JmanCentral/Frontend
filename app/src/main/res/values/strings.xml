@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">UTRIVIA</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Bienvenido</string>
+    <string name="welcome_back_text">Bienvenido otra vez !</string>
+    <string name="hello_user_name">Hola, %s</string>
+    <string name="chosenCategoria">%s Quiz</string>
+    <string name="questionNumber">Pregunta %s</string>
+    <string name="status_error"><font fgcolor='#FFFF3B30'>Error</font>  <font fgcolor='#689F38'>Error</font> </string>
+
+    <string name="categoria"><font fgcolor='#000000'>Categoria : </font>  <font fgcolor='@colors/orange'>%s</font> </string>
+    <string name="puntaje"><font fgcolor='#000000'>Puntaje : </font>  <font fgcolor='#689F38'>%s</font> </string>
+    <string name="fecha"><font fgcolor='#000000'>Fecha : </font>  <font fgcolor='#689F38'>%s</font> </string>
+    <string name="tiempo"><font fgcolor='#000000'>Tiempo : </font>  <font fgcolor='#689F38'>%s</font> </string>
+
+</resources>
