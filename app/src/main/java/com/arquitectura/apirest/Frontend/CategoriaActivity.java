@@ -48,19 +48,18 @@ public class CategoriaActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Seleccionar una dificultad predeterminada si no se elige nada
-                dificultadSeleccionada = "Fácil";
+                dificultadSeleccionada = "facil";
             }
         });
 
         // Listener para el botón de retroceso
         backBtn.setOnClickListener(v -> finish());
 
-        matematicasCard.setOnClickListener(v -> abrirTrivia("Matemáticas"));
-        geografiaCard.setOnClickListener(v -> abrirTrivia("Geografía"));
-        literaturaCard.setOnClickListener(v -> abrirTrivia("Literatura"));
-        entretenimientoCard.setOnClickListener(v -> abrirTrivia("Entretenimiento"));
-        deportesCard.setOnClickListener(v -> abrirTrivia("Deportes"));
+        matematicasCard.setOnClickListener(v -> abrirTrivia("matematicas"));
+        geografiaCard.setOnClickListener(v -> abrirTrivia("geografia"));
+        literaturaCard.setOnClickListener(v -> abrirTrivia("literatura"));
+        entretenimientoCard.setOnClickListener(v -> abrirTrivia("entretenimiento"));
+        deportesCard.setOnClickListener(v -> abrirTrivia("deportes"));
     }
 
     private void abrirTrivia(String categoria) {

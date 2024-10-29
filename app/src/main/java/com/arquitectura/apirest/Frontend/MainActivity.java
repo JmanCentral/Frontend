@@ -2,6 +2,7 @@ package com.arquitectura.apirest.Frontend;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,7 +10,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.arquitectura.apirest.Entidades.Usuario;
@@ -21,11 +21,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import android.content.SharedPreferences;
-
 public class MainActivity extends AppCompatActivity {
 
-    // Instancia de SharedPreferences
     SharedPreferences sharedPreferences;
     EditText username;
     EditText password;
@@ -38,18 +35,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // Inicializar SharedPreferences
         sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
-        username = (EditText) findViewById(R.id.username);
-        password = (EditText) findViewById(R.id.password);
-        loginBtn = (Button) findViewById(R.id.loginBtn);
-        exitBtn = (Button) findViewById(R.id.exitBtn);
-        signUp = (TextView) findViewById(R.id.signUp);
+        username = findViewById(R.id.username);
+        password = findViewById(R.id.password);
+        loginBtn = findViewById(R.id.loginBtn);
+        exitBtn = findViewById(R.id.exitBtn);
+        signUp = findViewById(R.id.signUp);
         usuarioService = APIS.getUsuarioService();
+
+        // Verificar si ya existe un usuario registrado
+        if (sharedPreferences.contains("username")) {
+            String savedUsername = sharedPreferences.getString("username", null);
+            if (savedUsername != null) {
+                Toast.makeText(this, "Bienvenido de nuevo, " + savedUsername, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+                intent.putExtra("username", savedUsername);
+                startActivity(intent);
+                finish();
+            }
+        }
     }
 
     public void login(View view) {
@@ -76,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, MenuActivity.class);
                     intent.putExtra("username", usuarioLogueado.getUsername());
                     startActivity(intent);
+                    finish(); // Finalizar MainActivity
                 } else {
                     Toast.makeText(MainActivity.this, "Login fallido", Toast.LENGTH_SHORT).show();
                 }

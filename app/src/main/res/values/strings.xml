@@ -15,9 +15,9 @@
 
 
         <string-array name="difficulty_options">
-            <item>Fácil</item>
-            <item>Intermedio</item>
-            <item>Difícil</item>
+            <item>facil</item>
+            <item>medio</item>
+            <item>dificil</item>
         </string-array>
 
 </resources>

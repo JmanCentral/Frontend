@@ -49,39 +49,42 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void startQuiz(View view) {
-        // Iniciar la actividad QuizActivity
+
         Intent intent = new Intent(this, CategoriaActivity.class);
+        String username = sharedPreferences.getString("username", "Invitado");
+        intent.putExtra("username", username);
         startActivity(intent);
 
     }
 
     public void reglas(View view) {
-        // Iniciar la actividad RulesActivity
+
+
         Intent intent = new Intent(this, ReglasActivity.class);
         startActivity(intent);
     }
 
     public void historial(View view) {
-        // Iniciar la actividad HistoryActivity
+
+
         Intent intent = new Intent(this, HistorialActivity.class);
         startActivity(intent);
 
     }
     public void editarContrasena(View view) {
-        // Iniciar la actividad EditPasswordActivity
+
+
         Intent intent = new Intent(this, EditarContraActivity.class);
         startActivity(intent);
     }
     public void salir(View view) {
-        // Limpiar SharedPreferences al salir
+
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
         editor.apply();
 
-        // Mostrar un mensaje de confirmación
         Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
 
-        // Redirigir a MainActivity
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish(); // Finalizar la actividad actual
