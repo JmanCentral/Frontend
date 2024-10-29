@@ -16,7 +16,7 @@
 
         <string-array name="difficulty_options">
             <item>facil</item>
-            <item>medio</item>
+            <item>intermedio</item>
             <item>dificil</item>
         </string-array>
 
