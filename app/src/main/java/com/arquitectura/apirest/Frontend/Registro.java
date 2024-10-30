@@ -48,11 +48,11 @@ public class Registro extends AppCompatActivity {
 
         // Validaciones de entrada
         if (!isValidEmail(correo)) {
-            Toast.makeText(this, "Correo no válido", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Correo no válido. debe tener un formato válido", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!isValidUsername(nombreUsuario)) {
-            Toast.makeText(this, "Nombre de usuario no válido", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Nombre de usuario no válido debe tener entre 4 y 15 caracteres", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!isValidPassword(contrasena)) {
@@ -87,7 +87,7 @@ public class Registro extends AppCompatActivity {
                     finish();
                 } else {
                     // Error en el registro
-                    Toast.makeText(Registro.this, "Registro fallido", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Registro.this, "El nombre de usuario ya esta en uso", Toast.LENGTH_SHORT).show();
                 }
             }
 

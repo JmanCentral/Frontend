@@ -60,7 +60,7 @@ public class MenuActivity extends AppCompatActivity {
 
         if (ID == -1) {
             Toast.makeText(this, "ID de usuario no válido", Toast.LENGTH_SHORT).show();
-            return; // No continuar si el ID no es válido
+            return;
         }
 
         intent.putExtra("ID", ID);
@@ -79,8 +79,19 @@ public class MenuActivity extends AppCompatActivity {
 
     public void historial(View view) {
 
-
         Intent intent = new Intent(this, HistorialActivity.class);
+
+        Long ID = sharedPreferences.getLong("ID", -1);
+        String username = sharedPreferences.getString("username", "Invitado");
+
+        if (ID == -1) {
+            Toast.makeText(this, "ID de usuario no válido", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        intent.putExtra("ID", ID);
+        intent.putExtra("username", username);
+
         startActivity(intent);
 
     }
@@ -100,7 +111,7 @@ public class MenuActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-        finish(); // Finalizar la actividad actual
+        finish();
     }
 
 
