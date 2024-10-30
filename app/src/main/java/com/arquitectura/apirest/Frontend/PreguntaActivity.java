@@ -1,5 +1,6 @@
 package com.arquitectura.apirest.Frontend;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,17 +31,18 @@ import retrofit2.Response;
 public class PreguntaActivity extends AppCompatActivity {
 
     private TextView categoriaText, questionNumber, questionText;
-    private TextView op1Text, op2Text, op3Text, op4Text;
+    private TextView op1Text, op2Text, op3Text, op4Text, puntajeText;
     private CardView op1, op2, op3, op4;
     private List<Pregunta> preguntas;
     private int preguntaActual = 0;
     private String categoria, dificultad;
     private PreguntaService preguntaService;
     private HistorialService historialService;
-    private Long idUsuario;  // ID del usuario actual
-    private int puntaje = 0; // Puntaje acumulado
+    private Long idUsuario;
+    private int puntaje = 0;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,11 +61,12 @@ public class PreguntaActivity extends AppCompatActivity {
         op2 = findViewById(R.id.op2);
         op3 = findViewById(R.id.op3);
         op4 = findViewById(R.id.op4);
+        puntajeText = findViewById(R.id.txt_puntaje);
 
         // Obtener datos desde el intent
         categoria = getIntent().getStringExtra("CATEGORIA_SELECCIONADA");
         dificultad = getIntent().getStringExtra("DIFICULTAD_SELECCIONADA");
-        idUsuario = getIntent().getLongExtra("ID", -1L);  // Cambiado a "ID"
+        idUsuario = getIntent().getLongExtra("ID", -1L);
 
         categoriaText.setText(categoria);
 
@@ -152,17 +155,19 @@ public class PreguntaActivity extends AppCompatActivity {
             mostrarRespuestaCorrecta(respuestaCorrecta);
         }
 
-        // Retrasar la carga de la siguiente pregunta para que el usuario pueda ver los colores
+        // Actualizar puntaje en puntajeText
+        puntajeText.setText("Puntaje: " + puntaje);
+
         new Handler().postDelayed(() -> {
             preguntaActual++;
             if (preguntaActual < preguntas.size()) {
-                mostrarPregunta();  // Mostrar la siguiente pregunta
+                mostrarPregunta();
             } else {
-                registrarHistorial();  // Registrar el historial después de responder la última pregunta
+                registrarHistorial();
                 Toast.makeText(this, "Has terminado el cuestionario.", Toast.LENGTH_SHORT).show();
                 finish();
             }
-        }, 2000);  // Esperar 2 segundos antes de cargar la siguiente pregunta
+        }, 500);
     }
 
     private void mostrarRespuestaCorrecta(String respuestaCorrecta) {
