@@ -76,12 +76,14 @@ public class MainActivity extends AppCompatActivity {
 
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("username", usuarioLogueado.getUsername());
+                    editor.putLong("ID", usuarioLogueado.getId());
                     editor.apply();
 
                     Toast.makeText(MainActivity.this, "Login exitoso", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(MainActivity.this, MenuActivity.class);
                     intent.putExtra("username", usuarioLogueado.getUsername());
+                    intent.putExtra("ID", usuarioLogueado.getId());
                     startActivity(intent);
                     finish(); // Finalizar MainActivity
                 } else {

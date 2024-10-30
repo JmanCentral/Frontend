@@ -49,7 +49,6 @@ public class MenuActivity extends AppCompatActivity {
         if (ID == -1) {
             // Manejar el error aquí (por ejemplo, finalizar la actividad o mostrar un mensaje)
             Toast.makeText(this, "ID de usuario no válido", Toast.LENGTH_SHORT).show();
-            finish(); // Termina la actividad si el ID es inválido
         }
 
     }
