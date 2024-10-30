@@ -47,6 +47,7 @@ public class PreguntaActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pregunta);
 
+        // Inicialización de vistas
         categoriaText = findViewById(R.id.categoria);
         questionNumber = findViewById(R.id.questionNumber);
         questionText = findViewById(R.id.questionText);
@@ -62,7 +63,7 @@ public class PreguntaActivity extends AppCompatActivity {
         // Obtener datos desde el intent
         categoria = getIntent().getStringExtra("CATEGORIA_SELECCIONADA");
         dificultad = getIntent().getStringExtra("DIFICULTAD_SELECCIONADA");
-        idUsuario = getIntent().getLongExtra("ID_USUARIO", -1L);  // Obtener ID del usuario
+        idUsuario = getIntent().getLongExtra("ID", -1L);  // Cambiado a "ID"
 
         categoriaText.setText(categoria);
 
@@ -100,10 +101,10 @@ public class PreguntaActivity extends AppCompatActivity {
     private void mostrarPregunta() {
         if (preguntaActual < preguntas.size()) {
             // Restablecer colores de las opciones antes de mostrar la nueva pregunta
-            op1.setCardBackgroundColor(Color.WHITE);  // O el color predeterminado que tengas
-            op2.setCardBackgroundColor(Color.WHITE);  // O el color predeterminado que tengas
-            op3.setCardBackgroundColor(Color.WHITE);  // O el color predeterminado que tengas
-            op4.setCardBackgroundColor(Color.WHITE);  // O el color predeterminado que tengas
+            op1.setCardBackgroundColor(Color.WHITE);
+            op2.setCardBackgroundColor(Color.WHITE);
+            op3.setCardBackgroundColor(Color.WHITE);
+            op4.setCardBackgroundColor(Color.WHITE);
 
             Pregunta pregunta = preguntas.get(preguntaActual);
             questionNumber.setText("Pregunta " + (preguntaActual + 1));
@@ -114,7 +115,6 @@ public class PreguntaActivity extends AppCompatActivity {
             op4Text.setText(pregunta.getOp4());
         }
     }
-
 
     private void configurarClickOpciones() {
         View.OnClickListener listener = view -> {
@@ -154,12 +154,11 @@ public class PreguntaActivity extends AppCompatActivity {
 
         // Retrasar la carga de la siguiente pregunta para que el usuario pueda ver los colores
         new Handler().postDelayed(() -> {
-            // Cargar la siguiente pregunta o finalizar si no hay más
             preguntaActual++;
             if (preguntaActual < preguntas.size()) {
                 mostrarPregunta();  // Mostrar la siguiente pregunta
             } else {
-                registrarHistorial();
+                registrarHistorial();  // Registrar el historial después de responder la última pregunta
                 Toast.makeText(this, "Has terminado el cuestionario.", Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -205,4 +204,5 @@ public class PreguntaActivity extends AppCompatActivity {
         });
     }
 }
+
 

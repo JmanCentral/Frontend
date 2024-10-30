@@ -45,12 +45,26 @@ public class MenuActivity extends AppCompatActivity {
 
        String username = sharedPreferences.getString("username", "Invitado");
        helloUserName.setText(getString(R.string.hello_user_name, username));
+       Long ID = getIntent().getLongExtra("ID", -1);
+        if (ID == -1) {
+            // Manejar el error aquí (por ejemplo, finalizar la actividad o mostrar un mensaje)
+            Toast.makeText(this, "ID de usuario no válido", Toast.LENGTH_SHORT).show();
+            finish(); // Termina la actividad si el ID es inválido
+        }
 
     }
 
     public void startQuiz(View view) {
 
         Intent intent = new Intent(this, CategoriaActivity.class);
+        Long ID = sharedPreferences.getLong("ID", -1); // Cambia el valor predeterminado a -1
+
+        if (ID == -1) {
+            Toast.makeText(this, "ID de usuario no válido", Toast.LENGTH_SHORT).show();
+            return; // No continuar si el ID no es válido
+        }
+
+        intent.putExtra("ID", ID);
         String username = sharedPreferences.getString("username", "Invitado");
         intent.putExtra("username", username);
         startActivity(intent);

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -63,7 +64,18 @@ public class CategoriaActivity extends AppCompatActivity {
     }
 
     private void abrirTrivia(String categoria) {
+
+        // Obtener el ID y el nombre de usuario desde el Intent anterior
+        long idUsuario = getIntent().getLongExtra("ID", -1); // Cambia el valor predeterminado a -1 para detección de errores
+        String username = getIntent().getStringExtra("username");
+
+        if (idUsuario == -1) {
+            Toast.makeText(this, "ID de usuario no válido", Toast.LENGTH_SHORT).show();
+            return; // No continuar si el ID no es válido
+        }
         Intent intent = new Intent(CategoriaActivity.this, PreguntaActivity.class);
+        intent.putExtra("username", getIntent().getStringExtra("username"));
+        intent.putExtra("ID", getIntent().getLongExtra("ID", 0));
         intent.putExtra("CATEGORIA_SELECCIONADA", categoria);
         intent.putExtra("DIFICULTAD_SELECCIONADA", dificultadSeleccionada);
         startActivity(intent);

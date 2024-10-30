@@ -74,12 +74,15 @@ public class Registro extends AppCompatActivity {
                     // Guardar el nombre de usuario en SharedPreferences
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("username", usuarioRegistrado.getUsername());
+                    editor.putLong("ID", usuarioRegistrado.getId());
                     editor.apply();
 
                     // Registro exitoso, redirigir a MenuActivity
                     Toast.makeText(Registro.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(Registro.this, MenuActivity.class);
+                    intent.putExtra("ID", usuarioRegistrado.getId());
                     intent.putExtra("username", usuarioRegistrado.getUsername());
+
                     startActivity(intent);
                     finish();
                 } else {
