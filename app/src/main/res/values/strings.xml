@@ -14,10 +14,10 @@
     <string name="tiempo"><font fgcolor='#000000'>Tiempo : </font>  <font fgcolor='#689F38'>%s</font> </string>
 
 
-        <string-array name="difficulty_options">
-            <item>facil</item>
-            <item>intermedio</item>
-            <item>dificil</item>
-        </string-array>
+    <string-array name="difficulty_options">
+        <item>facil</item>
+        <item>intermedio</item>
+        <item>dificil</item>
+    </string-array>
 
 </resources>
