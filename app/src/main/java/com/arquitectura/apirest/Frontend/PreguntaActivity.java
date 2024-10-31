@@ -3,6 +3,7 @@ package com.arquitectura.apirest.Frontend;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
@@ -17,9 +18,12 @@ import com.arquitectura.apirest.Entidades.Pregunta;
 import com.arquitectura.apirest.R;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import Utils.APIS;
 import Utils.HistorialService;
@@ -31,7 +35,7 @@ import retrofit2.Response;
 public class PreguntaActivity extends AppCompatActivity {
 
     private TextView categoriaText, questionNumber, questionText;
-    private TextView op1Text, op2Text, op3Text, op4Text, puntajeText;
+    private TextView op1Text, op2Text, op3Text, op4Text, puntajeText, tiempoText;
     private CardView op1, op2, op3, op4;
     private List<Pregunta> preguntas;
     private int preguntaActual = 0;
@@ -40,7 +44,13 @@ public class PreguntaActivity extends AppCompatActivity {
     private HistorialService historialService;
     private Long idUsuario;
     private int puntaje = 0;
+    private int ayudas = 0;
+    private boolean ayudaUsada = false;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    private CountDownTimer countDownTimer;  // Temporizador
+    private long tiempoTotal = 0;
+    private long tiempoRestante = 10;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -62,6 +72,7 @@ public class PreguntaActivity extends AppCompatActivity {
         op3 = findViewById(R.id.op3);
         op4 = findViewById(R.id.op4);
         puntajeText = findViewById(R.id.txt_puntaje);
+        tiempoText = findViewById(R.id.txt_tiempo);
 
         // Obtener datos desde el intent
         categoria = getIntent().getStringExtra("CATEGORIA_SELECCIONADA");
@@ -102,6 +113,8 @@ public class PreguntaActivity extends AppCompatActivity {
     }
 
     private void mostrarPregunta() {
+
+        ayudaUsada = false;
         if (preguntaActual < preguntas.size()) {
             // Restablecer colores de las opciones antes de mostrar la nueva pregunta
             op1.setCardBackgroundColor(Color.WHITE);
@@ -117,6 +130,7 @@ public class PreguntaActivity extends AppCompatActivity {
             op3Text.setText(pregunta.getOp3());
             op4Text.setText(pregunta.getOp4());
         }
+        iniciarTemporizador();
     }
 
     private void configurarClickOpciones() {
@@ -147,10 +161,10 @@ public class PreguntaActivity extends AppCompatActivity {
         }
 
         if (respuestaUsuario.equals(respuestaCorrecta)) {
-            puntaje += 10;  // Incrementar puntaje
+            puntaje += 10;
             opcionSeleccionada.setCardBackgroundColor(Color.GREEN);
         } else {
-            puntaje -= 5;  // Descontar puntos por respuesta incorrecta
+            puntaje -= 5;
             opcionSeleccionada.setCardBackgroundColor(Color.RED);
             mostrarRespuestaCorrecta(respuestaCorrecta);
         }
@@ -163,8 +177,11 @@ public class PreguntaActivity extends AppCompatActivity {
             if (preguntaActual < preguntas.size()) {
                 mostrarPregunta();
             } else {
-                registrarHistorial();
-                Toast.makeText(this, "Has terminado el cuestionario.", Toast.LENGTH_SHORT).show();
+                if (!historialRegistrado) {
+                    registrarHistorial();
+                    historialRegistrado = true;
+                }
+                Toast.makeText(PreguntaActivity.this, "Juego terminado", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }, 500);
@@ -186,8 +203,13 @@ public class PreguntaActivity extends AppCompatActivity {
         Pregunta pregunta = preguntas.get(preguntaActual - 1);  // Última pregunta respondida
         String fecha = dateFormat.format(new Date());
 
+        // Convertir tiempo total de milisegundos a formato de tiempo (mm:ss)
+        long minutos = tiempoTotal / 60;
+        long segundos = tiempoTotal % 60;
+        String tiempo = String.format("%02d:%02d", minutos, segundos);
+
         Historial historial = new Historial(
-                null, puntaje, fecha, "00:00", 0, idUsuario, pregunta.getId_pregunta(),
+                null, puntaje, fecha, tiempo, ayudas, idUsuario, pregunta.getId_pregunta(),
                 "Usuario", categoria, dificultad
         );
 
@@ -208,6 +230,114 @@ public class PreguntaActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void eliminarunapregunta(View view) {
+
+        if (!ayudaUsada) {  // Verificar que no se haya usado una ayuda en la pregunta actual
+            ayudaUsada = true;  // Marcar que la ayuda fue usada
+            ayudas++;  // Incrementar el contador de ayudas
+
+            Pregunta pregunta = preguntas.get(preguntaActual);
+            String respuestaCorrecta = pregunta.getRespuesta();
+
+            // Crear una lista con las opciones incorrectas
+            List<CardView> opcionesIncorrectas = new ArrayList<>();
+            if (!op1Text.getText().toString().equals(respuestaCorrecta)) opcionesIncorrectas.add(op1);
+            if (!op2Text.getText().toString().equals(respuestaCorrecta)) opcionesIncorrectas.add(op2);
+            if (!op3Text.getText().toString().equals(respuestaCorrecta)) opcionesIncorrectas.add(op3);
+            if (!op4Text.getText().toString().equals(respuestaCorrecta)) opcionesIncorrectas.add(op4);
+
+            // Seleccionar una opción incorrecta al azar
+            if (!opcionesIncorrectas.isEmpty()) {
+                int randomIndex = new Random().nextInt(opcionesIncorrectas.size());
+                opcionesIncorrectas.get(randomIndex).setCardBackgroundColor(Color.RED);
+            }
+
+            puntaje -= 3;  // Descontar 3 puntos por usar esta ayuda
+            puntajeText.setText("Puntaje: " + puntaje);
+        }
+
+
+    }
+
+    public void eliminardospreguntas(View view) {
+
+        if (!ayudaUsada) {  // Verificar que no se haya usado una ayuda en la pregunta actual
+            ayudaUsada = true;  // Marcar que la ayuda fue usada
+            ayudas++;  // Incrementar el contador de ayudas
+
+            Pregunta pregunta = preguntas.get(preguntaActual);
+            String respuestaCorrecta = pregunta.getRespuesta();
+
+            // Crear una lista con las opciones incorrectas
+            List<CardView> opcionesIncorrectas = new ArrayList<>();
+            if (!op1Text.getText().toString().equals(respuestaCorrecta)) opcionesIncorrectas.add(op1);
+            if (!op2Text.getText().toString().equals(respuestaCorrecta)) opcionesIncorrectas.add(op2);
+            if (!op3Text.getText().toString().equals(respuestaCorrecta)) opcionesIncorrectas.add(op3);
+            if (!op4Text.getText().toString().equals(respuestaCorrecta)) opcionesIncorrectas.add(op4);
+
+            // Seleccionar dos opciones incorrectas al azar
+            if (opcionesIncorrectas.size() >= 2) {
+                Collections.shuffle(opcionesIncorrectas);
+                opcionesIncorrectas.get(0).setCardBackgroundColor(Color.RED);
+                opcionesIncorrectas.get(1).setCardBackgroundColor(Color.RED);
+            }
+
+            puntaje -= 5;  // Descontar 5 puntos por usar esta ayuda
+            puntajeText.setText("Puntaje: " + puntaje);
+        }
+    }
+    private void iniciarTemporizador() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();  // Cancela el temporizador anterior si existe
+        }
+
+        tiempoRestante = 10;  // Reinicia el tiempo a 10 segundos
+        tiempoText.setText(String.valueOf(tiempoRestante));
+
+        countDownTimer = new CountDownTimer(10000, 1000) {  // 10 segundos, cuenta regresiva cada 1 segundo
+            @Override
+            public void onTick(long millisUntilFinished) {
+                tiempoRestante = millisUntilFinished / 1000;
+                tiempoText.setText(String.valueOf(tiempoRestante));
+            }
+
+            @Override
+            public void onFinish() {
+                tiempoRestante = 0;
+                tiempoText.setText(String.valueOf(tiempoRestante));
+                Toast.makeText(PreguntaActivity.this, "Tiempo alcanzado", Toast.LENGTH_SHORT).show();
+                puntaje -= 5;  // Descontar 5 puntos si el tiempo se acaba
+                puntajeText.setText("Puntaje: " + puntaje);
+                mostrarSiguientePregunta();  // Mostrar la siguiente pregunta cuando el tiempo termina
+            }
+        }.start();
+    }
+
+    private boolean historialRegistrado = false;
+    private void mostrarSiguientePregunta() {
+        tiempoTotal += (10 - tiempoRestante);  // Sumar el tiempo usado para responder esta pregunta
+
+        if (preguntaActual < preguntas.size() - 1) {
+            preguntaActual++;
+            mostrarPregunta();  // Mostrar la nueva pregunta
+        } else {
+            if (!historialRegistrado) {
+                registrarHistorial();  // Registrar el historial al terminar todas las preguntas
+                historialRegistrado = true;  // Marcar como registrado para evitar duplicados
+            }
+        }
+    }
+
+    public void onFinish() {
+        tiempoRestante = 0;
+        tiempoText.setText(String.valueOf(tiempoRestante));
+        Toast.makeText(PreguntaActivity.this, "Tiempo alcanzado", Toast.LENGTH_SHORT).show();
+        puntaje -= 5;  // Descontar 5 puntos si el tiempo se acaba
+        puntajeText.setText("Puntaje: " + puntaje);
+        mostrarSiguientePregunta();  // Mostrar la siguiente pregunta cuando el tiempo termina
+    }
+
 }
 
 
