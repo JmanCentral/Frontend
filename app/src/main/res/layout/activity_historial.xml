@@ -7,7 +7,6 @@
     android:background="#f8f9fa"
     tools:context=".Frontend.HistorialActivity">
 
-
     <LinearLayout
         android:id="@+id/Layout"
         android:layout_width="match_parent"
@@ -36,7 +35,7 @@
 
     </LinearLayout>
 
-
+    <!-- Sección Izquierda -->
     <LinearLayout
         android:id="@+id/left"
         android:layout_width="wrap_content"
@@ -88,7 +87,6 @@
             android:textColor="@color/black"
             android:textSize="20sp" />
 
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -104,13 +102,9 @@
             android:text="Dificultad"
             android:textColor="@color/black"
             android:textSize="20sp" />
-
-
-
-
-
     </LinearLayout>
 
+    <!-- Sección Derecha -->
     <LinearLayout
         android:id="@+id/right"
         android:layout_width="wrap_content"
@@ -166,7 +160,6 @@
             android:textColor="#f63a98"
             android:textSize="20sp" />
 
-
         <TextView
             android:id="@+id/Categoria"
             android:layout_width="wrap_content"
@@ -185,9 +178,46 @@
             android:textColor="#f63a98"
             android:textSize="20sp" />
 
+        <TextView
+            android:id="@+id/idhistorial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:textColor="#f63a98"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/idusuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:textColor="#f63a98"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/idpregunta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:textColor="#f63a98"
+            android:textSize="20sp" />
+
 
     </LinearLayout>
 
+    <!-- ProgressBar para mostrar durante la carga -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- RecyclerView para mostrar la lista de historial -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
@@ -197,5 +227,19 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/right" />
 
+    <!-- TextView para mostrar cuando no haya historial -->
+    <TextView
+        android:id="@+id/noHistorial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="No hay historial disponible"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
