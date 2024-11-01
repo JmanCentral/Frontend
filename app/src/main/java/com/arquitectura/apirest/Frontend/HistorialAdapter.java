@@ -28,7 +28,7 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
     @Override
     public HistorialViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.activity_historial, parent, false); // Reemplaza con el nombre de tu layout XML
+        View view = inflater.inflate(R.layout.item_historial, parent, false); // Reemplaza con el nombre de tu layout XML
         return new HistorialViewHolder(view);
     }
 
@@ -45,9 +45,6 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
         holder.tiempo.setText(historial.getTiempo());
         holder.categoria.setText(historial.getCategoria());
         holder.dificultad.setText(historial.getDificultad());
-        holder.id_historial.setText(String.valueOf(historial.getId()));
-        holder.id_pregunta.setText(String.valueOf(historial.getId_pregunta()));
-        holder.id_usuario.setText(String.valueOf(historial.getId_usuario()));
     }
 
     @Override
@@ -67,9 +64,6 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
             tiempo = itemView.findViewById(R.id.Tiempo);
             categoria = itemView.findViewById(R.id.Categoria);
             dificultad = itemView.findViewById(R.id.Dificultad);
-            id_historial = itemView.findViewById(R.id.idhistorial);
-            id_pregunta = itemView.findViewById(R.id.idpregunta);
-            id_usuario = itemView.findViewById(R.id.idusuario);
         }
     }
 }

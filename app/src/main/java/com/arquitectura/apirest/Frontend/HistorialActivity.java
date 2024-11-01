@@ -82,7 +82,7 @@ public class HistorialActivity extends AppCompatActivity {
                         noHistorial.setVisibility(View.GONE); // Ocultar el mensaje si hay datos
                     }
                 } else {
-                    // Mostrar un mensaje si no hay datos o hubo un error
+
                     noHistorial.setText("No se pudo obtener el historial.");
                     noHistorial.setVisibility(View.VISIBLE);
                 }
@@ -90,7 +90,7 @@ public class HistorialActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Historial>> call, Throwable t) {
-                // Ocultar la barra de progreso y mostrar error
+
                 progressBar.setVisibility(View.GONE);
                 noHistorial.setText("Error de conexión: " + t.getMessage());
                 noHistorial.setVisibility(View.VISIBLE);
