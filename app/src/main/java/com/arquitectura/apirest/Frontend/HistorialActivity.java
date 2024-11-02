@@ -97,4 +97,9 @@ public class HistorialActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void regresar(View view) {
+        Intent intent = new Intent(this, MenuActivity.class);
+        startActivity(intent);
+    }
 }
