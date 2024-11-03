@@ -196,11 +196,13 @@ public class PreguntaActivity extends AppCompatActivity {
 
 
 
+
+
     private void mostrarPregunta() {
 
         ayudaUsada = false;
         if (preguntaActual < preguntas.size()) {
-            // Restablecer colores de las opciones antes de mostrar la nueva pregunta
+
             op1.setCardBackgroundColor(Color.WHITE);
             op2.setCardBackgroundColor(Color.WHITE);
             op3.setCardBackgroundColor(Color.WHITE);
@@ -303,17 +305,13 @@ public class PreguntaActivity extends AppCompatActivity {
             public void onResponse(Call<Historial> call, Response<Historial> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(PreguntaActivity.this, "Historial registrado correctamente.", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Manejo del error en caso de que el registro falle en el servidor
-                    Toast.makeText(PreguntaActivity.this, "Error al registrar historial, guardando localmente.", Toast.LENGTH_SHORT).show();
-                    guardarHistorialLocalmente(historial);
                 }
             }
 
             @Override
             public void onFailure(Call<Historial> call, Throwable t) {
-                Toast.makeText(PreguntaActivity.this, "Error en la conexión con el servidor.", Toast.LENGTH_SHORT).show();
                 guardarHistorialLocalmente(historial);
+                Toast.makeText(PreguntaActivity.this, "Historial guardado exitosamente sin internet.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -321,7 +319,7 @@ public class PreguntaActivity extends AppCompatActivity {
     private void guardarHistorialLocalmente(Historial historial) {
         // Crear objeto HistorialRoom con los datos necesarios
         HistorialRoom historialRoom = new HistorialRoom(
-                historial.getId(),
+                null,
                 historial.getPuntaje(),
                 historial.getFecha(),
                 historial.getTiempo(),
@@ -334,7 +332,6 @@ public class PreguntaActivity extends AppCompatActivity {
         );
 
         new Thread(() -> {
-            // Inserta el historial en la base de datos local
             appDatabase.historialDao().insertHistorial(historialRoom);
             runOnUiThread(() -> {
                 Toast.makeText(PreguntaActivity.this, "Historial guardado localmente.", Toast.LENGTH_SHORT).show();

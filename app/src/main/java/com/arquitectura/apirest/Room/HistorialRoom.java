@@ -8,7 +8,6 @@ public class HistorialRoom {
 
     @PrimaryKey(autoGenerate = true)
     private Long id;
-
     private int puntaje;
     private String fecha;
     private String tiempo;
