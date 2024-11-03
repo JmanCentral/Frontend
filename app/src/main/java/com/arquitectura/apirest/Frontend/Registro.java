@@ -3,6 +3,7 @@ package com.arquitectura.apirest.Frontend;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -10,8 +11,10 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.arquitectura.apirest.Databsae.AppDatabase;
 import com.arquitectura.apirest.Entidades.Usuario;
 import com.arquitectura.apirest.R;
+import com.arquitectura.apirest.Room.UsuarioRoom;
 
 import Utils.APIS;
 import Utils.UsuarioService;
@@ -24,6 +27,7 @@ public class Registro extends AppCompatActivity {
     EditText username, email, password;
     UsuarioService usuarioService;
     SharedPreferences sharedPreferences;
+    AppDatabase appDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,9 @@ public class Registro extends AppCompatActivity {
 
         // Inicializar SharedPreferences
         sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        // Inicializar la base de datos Room
+        appDatabase = AppDatabase.getDatabase(this);
     }
 
     public void registrarse(View view) {
@@ -77,27 +84,34 @@ public class Registro extends AppCompatActivity {
                     editor.putLong("ID", usuarioRegistrado.getId());
                     editor.apply();
 
+                    guardarUsuarioLocalmente(nuevoUsuario);
                     // Registro exitoso, redirigir a MenuActivity
                     Toast.makeText(Registro.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(Registro.this, MenuActivity.class);
-                    intent.putExtra("ID", usuarioRegistrado.getId());
-                    intent.putExtra("username", usuarioRegistrado.getUsername());
-
                     startActivity(intent);
-                    finish();
-                } else {
-                    // Error en el registro
-                    Toast.makeText(Registro.this, "El nombre de usuario ya esta en uso", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
-                // Error de conexión
-                Toast.makeText(Registro.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+
             }
         });
     }
+
+    private void guardarUsuarioLocalmente(Usuario nuevoUsuario) {
+        UsuarioRoom usuarioRoom = new UsuarioRoom(null, nuevoUsuario.getUsername(), nuevoUsuario.getPassword(), nuevoUsuario.getEmail(), "Novato");
+
+        new Thread(() -> {
+            appDatabase.usuarioDao().insertUsuario(usuarioRoom);
+            runOnUiThread(() -> {
+                Toast.makeText(Registro.this, "Usuario guardado localmente", Toast.LENGTH_SHORT).show();
+            });
+        }).start();
+    }
+
+
+
 
     // Validaciones
     private boolean isValidEmail(String email) {

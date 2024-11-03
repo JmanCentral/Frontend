@@ -11,9 +11,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
+import com.arquitectura.apirest.Databsae.AppDatabase;
 import com.arquitectura.apirest.Entidades.Usuario;
 import com.arquitectura.apirest.R;
+import com.arquitectura.apirest.Room.UsuarioRoom;
 
 import Utils.APIS;
 import Utils.UsuarioService;
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     Button exitBtn;
     TextView signUp;
     UsuarioService usuarioService;
+    AppDatabase appDatabase;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -45,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         exitBtn = findViewById(R.id.exitBtn);
         signUp = findViewById(R.id.signUp);
         usuarioService = APIS.getUsuarioService();
+
+        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "app_database").build();
 
         // Verificar si ya existe un usuario registrado
         if (sharedPreferences.contains("username")) {
@@ -82,21 +88,43 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Login exitoso", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(MainActivity.this, MenuActivity.class);
-                    intent.putExtra("username", usuarioLogueado.getUsername());
-                    intent.putExtra("ID", usuarioLogueado.getId());
                     startActivity(intent);
-                    finish(); // Finalizar MainActivity
+                    finish();
                 } else {
-                    Toast.makeText(MainActivity.this, "Login fallido", Toast.LENGTH_SHORT).show();
+                    verificarUsuarioLocalmente(nombreUsuario, contrasenaUsuario);
                 }
             }
 
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                verificarUsuarioLocalmente(nombreUsuario, contrasenaUsuario);
             }
         });
     }
+
+    private void verificarUsuarioLocalmente(String username, String password) {
+        new Thread(() -> {
+            UsuarioRoom usuario = appDatabase.usuarioDao().verificarUsuario(username, password);
+            runOnUiThread(() -> {
+                if (usuario != null) {
+
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("username", usuario.getUsername());
+                    editor.putLong("ID", usuario.getId());
+                    editor.apply();
+
+                    Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+                    Toast.makeText(MainActivity.this, "Login exitoso desde la base de datos local", Toast.LENGTH_SHORT).show();
+                    startActivity(intent);
+                    finish();
+                } else {
+                    // Si no se encuentra el usuario en Room
+                    Toast.makeText(MainActivity.this, "Usuario no encontrado", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }).start();
+    }
+
 
     public void registro(View view) {
         Intent intent = new Intent(this, Registro.class);

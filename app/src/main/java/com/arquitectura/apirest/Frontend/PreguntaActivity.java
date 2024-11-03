@@ -13,9 +13,13 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.arquitectura.apirest.DAOS.PreguntaDao;
+import com.arquitectura.apirest.Databsae.AppDatabase;
 import com.arquitectura.apirest.Entidades.Historial;
 import com.arquitectura.apirest.Entidades.Pregunta;
 import com.arquitectura.apirest.R;
+import com.arquitectura.apirest.Room.HistorialRoom;
+import com.arquitectura.apirest.Room.PreguntaRoom;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,6 +54,7 @@ public class PreguntaActivity extends AppCompatActivity {
     private CountDownTimer countDownTimer;  // Temporizador
     private long tiempoTotal = 0;
     private long tiempoRestante = 10;
+    AppDatabase appDatabase;
 
 
     @SuppressLint("MissingInflatedId")
@@ -97,20 +102,99 @@ public class PreguntaActivity extends AppCompatActivity {
             public void onResponse(Call<List<Pregunta>> call, Response<List<Pregunta>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     preguntas = response.body();
+
+                    // Guarda las preguntas obtenidas del servidor en Room
+                    guardarPreguntasEnRoom(preguntas);
+
                     mostrarPregunta();
                 } else {
-                    Toast.makeText(PreguntaActivity.this, "No se encontraron preguntas.", Toast.LENGTH_SHORT).show();
-                    finish();
+                    Toast.makeText(PreguntaActivity.this, "No se encontraron preguntas en el servidor, cargando desde Room.", Toast.LENGTH_SHORT).show();
+                    cargarPreguntasDesdeRoom();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Pregunta>> call, Throwable t) {
-                Toast.makeText(PreguntaActivity.this, "Error al cargar preguntas.", Toast.LENGTH_SHORT).show();
-                finish();
+                // Si falla la conexión con el servidor, cargar las preguntas desde Room
+                Toast.makeText(PreguntaActivity.this, "Error al conectar con el servidor, cargando preguntas desde Room.", Toast.LENGTH_SHORT).show();
+                cargarPreguntasDesdeRoom();
             }
         });
     }
+
+    private void cargarPreguntasDesdeRoom() {
+        AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+        new Thread(() -> {
+            List<PreguntaRoom> preguntasRoom = db.preguntaDao().obtenerPreguntasPorCategoriaYDificultad(categoria, dificultad);
+            runOnUiThread(() -> {
+                if (preguntasRoom != null && !preguntasRoom.isEmpty()) {
+                    // Convertir PreguntaRoom a Pregunta para reutilizar en la lógica existente
+                    preguntas = convertirPreguntasRoomAPreguntas(preguntasRoom);
+                    mostrarPregunta();
+                } else {
+                    Toast.makeText(PreguntaActivity.this, "No hay preguntas disponibles en Room.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            });
+        }).start();
+    }
+
+    // Método para guardar preguntas en Room
+    private void guardarPreguntasEnRoom(List<Pregunta> preguntas) {
+        AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+        new Thread(() -> {
+            for (Pregunta pregunta : preguntas) {
+                // Verificar si la pregunta ya existe en Room
+                PreguntaRoom preguntaExistente = db.preguntaDao().obtenerPreguntaPorTextoYCategoria(pregunta.getPregunta(), pregunta.getCategoria());
+                if (preguntaExistente == null) {
+                    // Si no existe, insertar la nueva pregunta
+                    PreguntaRoom nuevaPreguntaRoom = new PreguntaRoom(
+                            null,
+                            pregunta.getPregunta(),
+                            pregunta.getOp1(),
+                            pregunta.getOp2(),
+                            pregunta.getOp3(),
+                            pregunta.getOp4(),
+                            pregunta.getRespuesta(),
+                            pregunta.getDificultad(),
+                            pregunta.getCategoria()
+                    );
+                    db.preguntaDao().insertarPregunta(nuevaPreguntaRoom);
+                } else {
+                    // Si existe, puedes optar por actualizarla
+                    preguntaExistente.setOp1(pregunta.getOp1());
+                    preguntaExistente.setOp2(pregunta.getOp2());
+                    preguntaExistente.setOp3(pregunta.getOp3());
+                    preguntaExistente.setOp4(pregunta.getOp4());
+                    preguntaExistente.setRespuesta(pregunta.getRespuesta());
+                    preguntaExistente.setDificultad(pregunta.getDificultad());
+                    db.preguntaDao().actualizarPregunta(preguntaExistente);
+                }
+            }
+        }).start();
+    }
+
+    // Convertir PreguntaRoom a Pregunta
+    private List<Pregunta> convertirPreguntasRoomAPreguntas(List<PreguntaRoom> preguntasRoom) {
+        List<Pregunta> listaPreguntas = new ArrayList<>();
+        for (PreguntaRoom preguntaRoom : preguntasRoom) {
+            Pregunta pregunta = new Pregunta(
+                    preguntaRoom.getId(),
+                    preguntaRoom.getPregunta(),
+                    preguntaRoom.getOp1(),
+                    preguntaRoom.getOp2(),
+                    preguntaRoom.getOp3(),
+                    preguntaRoom.getOp4(),
+                    preguntaRoom.getRespuesta(),
+                    preguntaRoom.getDificultad(),
+                    preguntaRoom.getCategoria()
+            );
+            listaPreguntas.add(pregunta);
+        }
+        return listaPreguntas;
+    }
+
+
 
     private void mostrarPregunta() {
 
@@ -220,15 +304,42 @@ public class PreguntaActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Toast.makeText(PreguntaActivity.this, "Historial registrado correctamente.", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(PreguntaActivity.this, "Error al registrar historial.", Toast.LENGTH_SHORT).show();
+                    // Manejo del error en caso de que el registro falle en el servidor
+                    Toast.makeText(PreguntaActivity.this, "Error al registrar historial, guardando localmente.", Toast.LENGTH_SHORT).show();
+                    guardarHistorialLocalmente(historial);
                 }
             }
 
             @Override
             public void onFailure(Call<Historial> call, Throwable t) {
                 Toast.makeText(PreguntaActivity.this, "Error en la conexión con el servidor.", Toast.LENGTH_SHORT).show();
+                guardarHistorialLocalmente(historial);
             }
         });
+    }
+
+    private void guardarHistorialLocalmente(Historial historial) {
+        // Crear objeto HistorialRoom con los datos necesarios
+        HistorialRoom historialRoom = new HistorialRoom(
+                historial.getId(),
+                historial.getPuntaje(),
+                historial.getFecha(),
+                historial.getTiempo(),
+                historial.getAyudas(),
+                historial.getId_usuario(),
+                historial.getId_pregunta(),
+                historial.getUsername(),
+                historial.getCategoria(),
+                historial.getDificultad()
+        );
+
+        new Thread(() -> {
+            // Inserta el historial en la base de datos local
+            appDatabase.historialDao().insertHistorial(historialRoom);
+            runOnUiThread(() -> {
+                Toast.makeText(PreguntaActivity.this, "Historial guardado localmente.", Toast.LENGTH_SHORT).show();
+            });
+        }).start();
     }
 
     public void eliminarunapregunta(View view) {
