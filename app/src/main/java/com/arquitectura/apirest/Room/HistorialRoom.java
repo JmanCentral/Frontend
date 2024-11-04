@@ -10,7 +10,7 @@ public class HistorialRoom {
     private Long id;
     private int puntaje;
     private String fecha;
-    private String tiempo;
+    private int tiempo;
     private int ayudas;
     private Long id_usuario;
     private Long id_pregunta;
@@ -18,12 +18,7 @@ public class HistorialRoom {
     private String categoria;
     private String dificultad;
 
-    // Constructor sin argumentos (Room lo necesita)
-    public HistorialRoom() {
-    }
-
-    // Constructor con todos los argumentos
-    public HistorialRoom(Long id, int puntaje, String fecha, String tiempo, int ayudas, Long id_usuario, Long id_pregunta, String username, String categoria, String dificultad) {
+    public HistorialRoom(Long id, int puntaje, String fecha, int tiempo, int ayudas, Long id_usuario, Long id_pregunta, String username, String categoria, String dificultad) {
         this.id = id;
         this.puntaje = puntaje;
         this.fecha = fecha;
@@ -36,7 +31,10 @@ public class HistorialRoom {
         this.dificultad = dificultad;
     }
 
-    // Getters y Setters
+    public HistorialRoom() {
+        // Constructor sin argumentos
+    }
+
     public Long getId() {
         return id;
     }
@@ -61,11 +59,11 @@ public class HistorialRoom {
         this.fecha = fecha;
     }
 
-    public String getTiempo() {
+    public int getTiempo() {
         return tiempo;
     }
 
-    public void setTiempo(String tiempo) {
+    public void setTiempo(int tiempo) {
         this.tiempo = tiempo;
     }
 
@@ -117,4 +115,5 @@ public class HistorialRoom {
         this.dificultad = dificultad;
     }
 }
+
 

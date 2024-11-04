@@ -289,15 +289,12 @@ public class PreguntaActivity extends AppCompatActivity {
             op4.setCardBackgroundColor(Color.GREEN);
         }
     }
-
     private void registrarHistorial() {
         Pregunta pregunta = preguntas.get(preguntaActual - 1);  // Última pregunta respondida
         String fecha = dateFormat.format(new Date());
 
-        // Convertir tiempo total de milisegundos a formato de tiempo (mm:ss)
-        long minutos = tiempoTotal / 60;
-        long segundos = tiempoTotal % 60;
-        String tiempo = String.format("%02d:%02d", minutos, segundos);
+        // Aquí se utiliza tiempoRestante que es un entero
+        int tiempo = (int) Math.toIntExact(tiempoRestante);  // El tiempo restante en segundos, que es un entero
 
         Historial historial = new Historial(
                 null, puntaje, fecha, tiempo, ayudas, idUsuario, pregunta.getId_pregunta(),
@@ -310,8 +307,7 @@ public class PreguntaActivity extends AppCompatActivity {
             public void onResponse(Call<Historial> call, Response<Historial> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(PreguntaActivity.this, "Historial registrado correctamente.", Toast.LENGTH_SHORT).show();
-                }
-                else{
+                } else {
                     guardarHistorialLocalmente(historial);
                     Toast.makeText(PreguntaActivity.this, "Historial guardado exitosamente sin internet.", Toast.LENGTH_SHORT).show();
                 }
@@ -324,6 +320,7 @@ public class PreguntaActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void guardarHistorialLocalmente(Historial historial) {
         if ((false) || (historial.getFecha() == null) || (historial.getId_usuario() == null) || (historial.getId_pregunta() == null)) {
@@ -428,26 +425,28 @@ public class PreguntaActivity extends AppCompatActivity {
         }
 
         tiempoRestante = 10;  // Reinicia el tiempo a 10 segundos
-        tiempoText.setText(String.valueOf(tiempoRestante));
+        tiempoText.setText(String.valueOf(tiempoRestante));  // Muestra el tiempo inicial en segundos
 
-        countDownTimer = new CountDownTimer(10000, 1000) {  // 10 segundos, cuenta regresiva cada 1 segundo
+        countDownTimer = new CountDownTimer(tiempoRestante * 1000, 1000) {  // 10 segundos, cuenta regresiva cada 1 segundo
             @Override
             public void onTick(long millisUntilFinished) {
-                tiempoRestante = millisUntilFinished / 1000;
-                tiempoText.setText(String.valueOf(tiempoRestante));
+                tiempoRestante = (int) (millisUntilFinished / 1000);  // Actualiza el tiempo restante en segundos
+                tiempoText.setText(String.valueOf(tiempoRestante));  // Muestra el tiempo restante en segundos
             }
 
             @Override
             public void onFinish() {
-                tiempoRestante = 0;
-                tiempoText.setText(String.valueOf(tiempoRestante));
+                tiempoRestante = 0;  // El tiempo ha llegado a cero
+                tiempoText.setText(String.valueOf(tiempoRestante));  // Muestra 0 segundos
                 Toast.makeText(PreguntaActivity.this, "Tiempo alcanzado", Toast.LENGTH_SHORT).show();
                 puntaje -= 5;  // Descontar 5 puntos si el tiempo se acaba
                 puntajeText.setText("Puntaje: " + puntaje);
-                mostrarSiguientePregunta();  // Mostrar la siguiente pregunta cuando el tiempo termina
+                mostrarSiguientePregunta();  // Muestra la siguiente pregunta cuando el tiempo termina
             }
         }.start();
     }
+
+
 
     private boolean historialRegistrado = false;
     private void mostrarSiguientePregunta() {

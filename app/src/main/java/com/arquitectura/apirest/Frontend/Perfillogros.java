@@ -1,6 +1,11 @@
 package com.arquitectura.apirest.Frontend;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,19 +13,97 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.arquitectura.apirest.Databsae.AppDatabase;
+import com.arquitectura.apirest.Entidades.Usuario;
 import com.arquitectura.apirest.R;
+
+import Utils.APIS;
+import Utils.UsuarioService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Perfillogros extends AppCompatActivity {
 
+    TextView usernameTextView, emailTextView, nivelTextView, logro1TextView, logro2TextView;
+    SharedPreferences sharedPreferences;
+    AppDatabase appDatabase;
+    UsuarioService usuarioService;
+    String username;
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_perfillogros);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        // Referencias a los TextViews
+        usernameTextView = findViewById(R.id.username1);
+        emailTextView = findViewById(R.id.email);
+        nivelTextView = findViewById(R.id.Nivel);
+        logro1TextView = findViewById(R.id.Logro1);
+        logro2TextView = findViewById(R.id.Logro2);
+
+        usuarioService = APIS.getUsuarioService();
+        appDatabase = AppDatabase.getDatabase(getApplicationContext());
+
+        Intent intent = getIntent();
+        username = intent.getStringExtra("username");
+
+        // Llamadas para modificar y obtener usuario
+        modificarusuario();
+        obtenerusuario();
+    }
+
+    private void obtenerusuario() {
+        Call<Usuario> call = usuarioService.verificarUsuarioExistente(username);
+        call.enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Usuario usuario = response.body();
+                    usernameTextView.setText(usuario.getUsername());
+                    emailTextView.setText(usuario.getEmail());
+                    nivelTextView.setText(usuario.getNivel());
+                    logro1TextView.setText(usuario.getLogro1());
+                    logro2TextView.setText(usuario.getLogro2());
+                } else {
+                    Toast.makeText(Perfillogros.this, "Error al obtener datos del usuario", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+                Toast.makeText(Perfillogros.this, "Error de conexión", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void modificarusuario() {
+        Usuario usuarioActualizado = new Usuario();
+        usuarioActualizado.setUsername(username);
+        usuarioActualizado.setNivel("Nuevo Nivel");  // Ejemplo: Cambiar el nivel
+        // Aquí puedes actualizar otros atributos como logro1 y logro2
+
+        Call<Usuario> call = usuarioService.actualizarNivel(username);
+        call.enqueue(new Callback<Usuario>() {
+            @Override
+            public void onResponse(Call<Usuario> call, Response<Usuario> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(Perfillogros.this, "Usuario actualizado correctamente", Toast.LENGTH_SHORT).show();
+                    obtenerusuario(); // Actualiza la vista después de modificar
+                } else {
+                    Toast.makeText(Perfillogros.this, "Error al actualizar usuario", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Usuario> call, Throwable t) {
+                Toast.makeText(Perfillogros.this, "Error de conexión", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }
+
+

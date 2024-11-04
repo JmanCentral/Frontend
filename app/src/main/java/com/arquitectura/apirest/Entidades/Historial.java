@@ -5,7 +5,7 @@ public class Historial {
     private Long id;
     private int puntaje;
     private String fecha;
-    private String tiempo;
+    private int tiempo;
     private int ayudas;
     private Long id_usuario;
     private Long id_pregunta;
@@ -13,7 +13,7 @@ public class Historial {
     private String categoria;
     private String dificultad;
 
-    public Historial(Long id, int puntaje, String fecha, String tiempo, int ayudas, Long id_usuario, Long id_pregunta, String username, String categoria, String dificultad) {
+    public Historial(Long id, int puntaje, String fecha, int tiempo, int ayudas, Long id_usuario, Long id_pregunta, String username, String categoria, String dificultad) {
         this.id = id;
         this.puntaje = puntaje;
         this.fecha = fecha;
@@ -28,6 +28,8 @@ public class Historial {
 
     public Historial() {
     }
+
+
 
     public Long getId() {
         return id;
@@ -53,11 +55,11 @@ public class Historial {
         this.fecha = fecha;
     }
 
-    public String getTiempo() {
+    public int getTiempo() {
         return tiempo;
     }
 
-    public void setTiempo(String tiempo) {
+    public void setTiempo(int tiempo) {
         this.tiempo = tiempo;
     }
 

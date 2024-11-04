@@ -6,17 +6,21 @@ public class Usuario {
     private String username;
     private String password;
     private String email;
-    private String logro;
+    private String nivel;
+    private String logro1;
+    private String logro2;
 
-    // Constructor
-
-
-    public Usuario(Long id, String username, String password, String email, String logro) {
+    public Usuario(Long id, String username, String password, String email, String nivel, String logro1, String logro2) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.logro = logro;
+        this.nivel = nivel;
+        this.logro1 = logro1;
+        this.logro2 = logro2;
+    }
+
+    public Usuario() {
     }
 
     public Long getId() {
@@ -51,11 +55,31 @@ public class Usuario {
         this.email = email;
     }
 
-    public String getLogro() {
-        return logro;
+    public String getNivel() {
+        return nivel;
     }
 
-    public void setLogro(String logro) {
-        this.logro = logro;
+    public void setNivel(String nivel) {
+        this.nivel = nivel;
+    }
+
+    public String getLogro1() {
+        return logro1;
+    }
+
+    public void setLogro1(String logro1) {
+        this.logro1 = logro1;
+    }
+
+    public String getLogro2() {
+        return logro2;
+    }
+
+    public void setLogro2(String logro2) {
+        this.logro2 = logro2;
     }
 }
+
+
+
+

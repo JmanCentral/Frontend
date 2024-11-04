@@ -8,6 +8,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface HistorialService {
@@ -18,4 +19,5 @@ public interface HistorialService {
     Call<List<Historial>> obtenerHistorialPorUsername(@Path("username") String username);
     @GET("/usuario/{username}/puntos-totales")
     Call<Historial> obtenerTotalPuntosPorUsuario(@Path("username")String username);
+
 }
