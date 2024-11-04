@@ -4,16 +4,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.arquitectura.apirest.R;
 
@@ -98,7 +94,7 @@ public class MenuActivity extends AppCompatActivity {
     public void editarContrasena(View view) {
 
 
-        Intent intent = new Intent(this, EditarContraActivity.class);
+        Intent intent = new Intent(this, Perfillogros.class);
         startActivity(intent);
     }
     public void salir(View view) {

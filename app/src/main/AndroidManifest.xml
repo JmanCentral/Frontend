@@ -26,7 +26,7 @@
             android:name=".Frontend.CategoriaActivity"
             android:exported="true" />
         <activity
-            android:name=".Frontend.EditarContraActivity"
+            android:name=".Frontend.Perfillogros"
             android:exported="false" />
         <activity
             android:name=".Frontend.HistorialActivity"

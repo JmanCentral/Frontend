@@ -10,13 +10,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.arquitectura.apirest.R;
 
-public class EditarContraActivity extends AppCompatActivity {
+public class Perfillogros extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_editar_contra);
+        setContentView(R.layout.activity_perfillogros);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
