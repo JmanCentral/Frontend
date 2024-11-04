@@ -29,7 +29,6 @@ public class Perfillogros extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     AppDatabase appDatabase;
     UsuarioService usuarioService;
-    String username;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -49,20 +48,22 @@ public class Perfillogros extends AppCompatActivity {
         appDatabase = AppDatabase.getDatabase(getApplicationContext());
 
         Intent intent = getIntent();
-        username = intent.getStringExtra("username");
+        String username = intent.getStringExtra("username");  // Asignar a la variable de clase `username`
 
-        // Llamadas para modificar y obtener usuario
-        modificarusuario();
-        obtenerusuario();
+        // Llamada para obtener usuario
+
+        modificarUsuario(username);
+        obtenerUsuario(username);
     }
 
-    private void obtenerusuario() {
+    private void obtenerUsuario(String username) {
         Call<Usuario> call = usuarioService.verificarUsuarioExistente(username);
         call.enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Usuario usuario = response.body();
+                    // Actualizar la UI con los datos del usuario
                     usernameTextView.setText(usuario.getUsername());
                     emailTextView.setText(usuario.getEmail());
                     nivelTextView.setText(usuario.getNivel());
@@ -80,19 +81,15 @@ public class Perfillogros extends AppCompatActivity {
         });
     }
 
-    private void modificarusuario() {
-        Usuario usuarioActualizado = new Usuario();
-        usuarioActualizado.setUsername(username);
-        usuarioActualizado.setNivel("Nuevo Nivel");  // Ejemplo: Cambiar el nivel
-        // Aquí puedes actualizar otros atributos como logro1 y logro2
+    private void modificarUsuario(String username) {
 
-        Call<Usuario> call = usuarioService.actualizarNivel(username);
+        // Llamada para actualizar usuario en el servicio
+        Call<Usuario> call = usuarioService.actualizarNivel(username); // Pasar el usuario actualizado
         call.enqueue(new Callback<Usuario>() {
             @Override
             public void onResponse(Call<Usuario> call, Response<Usuario> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(Perfillogros.this, "Usuario actualizado correctamente", Toast.LENGTH_SHORT).show();
-                    obtenerusuario(); // Actualiza la vista después de modificar
                 } else {
                     Toast.makeText(Perfillogros.this, "Error al actualizar usuario", Toast.LENGTH_SHORT).show();
                 }
@@ -105,5 +102,6 @@ public class Perfillogros extends AppCompatActivity {
         });
     }
 }
+
 
 

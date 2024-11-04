@@ -56,7 +56,6 @@ public class HistorialActivity extends AppCompatActivity {
         String username = intent.getStringExtra("username");
         obtenerHistorialDesdeApi(username);
     }
-
     private void obtenerHistorialDesdeApi(String username) {
         // Mostrar la barra de progreso
         progressBar.setVisibility(View.VISIBLE);
@@ -89,7 +88,6 @@ public class HistorialActivity extends AppCompatActivity {
                     noHistorial.setVisibility(View.VISIBLE);
                 }
             }
-
             @Override
             public void onFailure(Call<List<Historial>> call, Throwable t) {
                 // Intentar cargar desde la base de datos local
@@ -97,7 +95,6 @@ public class HistorialActivity extends AppCompatActivity {
             }
         });
     }
-
     private void cargarHistorialDesdeRoom(String username) {
         // Mostrar la barra de progreso
         progressBar.setVisibility(View.VISIBLE);

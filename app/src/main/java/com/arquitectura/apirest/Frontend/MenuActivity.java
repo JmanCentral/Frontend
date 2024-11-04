@@ -92,9 +92,9 @@ public class MenuActivity extends AppCompatActivity {
 
     }
     public void editarContrasena(View view) {
-
-
         Intent intent = new Intent(this, Perfillogros.class);
+        String username = sharedPreferences.getString("username", "Invitado");
+        intent.putExtra("username", username);
         startActivity(intent);
     }
     public void salir(View view) {

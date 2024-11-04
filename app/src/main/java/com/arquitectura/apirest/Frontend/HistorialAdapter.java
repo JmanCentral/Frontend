@@ -42,7 +42,7 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
         holder.puntosTotales.setText(String.valueOf(historial.getPuntaje()));
         holder.fecha.setText(historial.getFecha());
         holder.ayudas.setText(String.valueOf(historial.getAyudas()));
-        holder.tiempo.setText(historial.getTiempo());
+        holder.tiempo.setText(String.valueOf(historial.getTiempo()));
         holder.categoria.setText(historial.getCategoria());
         holder.dificultad.setText(historial.getDificultad());
     }

@@ -17,7 +17,7 @@ public interface HistorialService {
     Call<Historial> registrarHistorial(@Body Historial historial);
     @GET("usuario/{username}")
     Call<List<Historial>> obtenerHistorialPorUsername(@Path("username") String username);
-    @GET("/usuario/{username}/puntos-totales")
+    @GET("usuario/{username}/puntos-totales")
     Call<Historial> obtenerTotalPuntosPorUsuario(@Path("username")String username);
 
 }
