@@ -42,10 +42,7 @@ public class MenuActivity extends AppCompatActivity {
        String username = sharedPreferences.getString("username", "Invitado");
        helloUserName.setText(getString(R.string.hello_user_name, username));
        Long ID = getIntent().getLongExtra("ID", -1);
-        if (ID == -1) {
-            // Manejar el error aquí (por ejemplo, finalizar la actividad o mostrar un mensaje)
-            Toast.makeText(this, "ID de usuario no válido", Toast.LENGTH_SHORT).show();
-        }
+
 
     }
 
@@ -92,6 +89,7 @@ public class MenuActivity extends AppCompatActivity {
 
     }
     public void editarContrasena(View view) {
+
         Intent intent = new Intent(this, Perfillogros.class);
         String username = sharedPreferences.getString("username", "Invitado");
         intent.putExtra("username", username);

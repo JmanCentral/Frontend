@@ -20,4 +20,7 @@
         <item>dificil</item>
     </string-array>
 
+    <string name="descripcion_imagen"></string>
+
+
 </resources>
