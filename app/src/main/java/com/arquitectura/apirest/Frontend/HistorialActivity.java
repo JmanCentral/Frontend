@@ -15,8 +15,10 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.arquitectura.apirest.Databsae.AppDatabase;
 import com.arquitectura.apirest.Entidades.Historial;
 import com.arquitectura.apirest.R;
+import com.arquitectura.apirest.Room.HistorialRoom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,7 @@ public class HistorialActivity extends AppCompatActivity {
     private ProgressBar progressBar; // Para indicar la carga
     private TextView noHistorial; // Mensaje cuando no hay historial
     private HistorialService historialService;
+    private AppDatabase appDatabase;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -42,19 +45,19 @@ public class HistorialActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historial); // Asegúrate de que el nombre del layout es correcto
         recyclerView = findViewById(R.id.recyclerView);
-        progressBar = findViewById(R.id.progressBar); // Agrega un ProgressBar en el layout si no lo tienes
+        progressBar = findViewById(R.id.progressBar); // Asegúrate de tener un ProgressBar en el layout
         noHistorial = findViewById(R.id.noHistorial); // Para mostrar un mensaje si no hay historial
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         historialAdapter = new HistorialAdapter(this, historialList);
         recyclerView.setAdapter(historialAdapter);
+        appDatabase = AppDatabase.getDatabase(getApplicationContext());
 
         Intent intent = getIntent();
-        Long id = intent.getLongExtra("ID", -1);
         String username = intent.getStringExtra("username");
-        obtenerHistorial(username);
+        obtenerHistorialDesdeApi(username);
     }
 
-    private void obtenerHistorial(String username) {
+    private void obtenerHistorialDesdeApi(String username) {
         // Mostrar la barra de progreso
         progressBar.setVisibility(View.VISIBLE);
 
@@ -82,7 +85,6 @@ public class HistorialActivity extends AppCompatActivity {
                         noHistorial.setVisibility(View.GONE); // Ocultar el mensaje si hay datos
                     }
                 } else {
-
                     noHistorial.setText("No se pudo obtener el historial.");
                     noHistorial.setVisibility(View.VISIBLE);
                 }
@@ -90,12 +92,53 @@ public class HistorialActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Historial>> call, Throwable t) {
-
-                progressBar.setVisibility(View.GONE);
-                noHistorial.setText("Error de conexión: " + t.getMessage());
-                noHistorial.setVisibility(View.VISIBLE);
+                // Intentar cargar desde la base de datos local
+                cargarHistorialDesdeRoom(username);
             }
         });
+    }
+
+    private void cargarHistorialDesdeRoom(String username) {
+        // Mostrar la barra de progreso
+        progressBar.setVisibility(View.VISIBLE);
+
+        // Intentar cargar desde la base de datos local
+        new Thread(() -> {
+            List<HistorialRoom> historialLocal = appDatabase.historialDao().obtenerHistorialPorUsuario(username);
+            runOnUiThread(() -> {
+                if (historialLocal != null && !historialLocal.isEmpty()) {
+                    // Limpiar la lista actual
+                    historialList.clear();
+
+                    // Convertir de HistorialRoom a Historial
+                    for (HistorialRoom historialRoom : historialLocal) {
+                        Historial historial = new Historial();
+                        historial.setId(historialRoom.getId());
+                        historial.setPuntaje(historialRoom.getPuntaje());
+                        historial.setTiempo(historialRoom.getTiempo());
+                        historial.setAyudas(historialRoom.getAyudas());
+                        historial.setCategoria(historialRoom.getCategoria());
+                        historial.setDificultad(historialRoom.getDificultad());
+                        historial.setId_pregunta(historialRoom.getId_pregunta());
+                        historial.setId_usuario(historialRoom.getId_usuario());
+                        historial.setUsername(historialRoom.getUsername());
+                        historial.setFecha(historialRoom.getFecha());
+                        // Agregar a la lista de historial
+                        historialList.add(historial);
+                    }
+
+                    // Notificar al adaptador sobre los cambios
+                    historialAdapter.notifyDataSetChanged();
+                    progressBar.setVisibility(View.GONE);
+                    noHistorial.setVisibility(View.GONE); // Ocultar mensaje de no historial
+                } else {
+                    // Si no hay datos locales, mostrar un mensaje
+                    progressBar.setVisibility(View.GONE);
+                    noHistorial.setText("No hay historial disponible.");
+                    noHistorial.setVisibility(View.VISIBLE);
+                }
+            });
+        }).start();
     }
 
     public void regresar(View view) {
@@ -103,3 +146,5 @@ public class HistorialActivity extends AppCompatActivity {
         startActivity(intent);
     }
 }
+
+

@@ -26,6 +26,9 @@ public class Historial {
         this.dificultad = dificultad;
     }
 
+    public Historial() {
+    }
+
     public Long getId() {
         return id;
     }

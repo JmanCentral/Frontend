@@ -1,10 +1,12 @@
 package com.arquitectura.apirest.Frontend;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,7 +56,8 @@ public class PreguntaActivity extends AppCompatActivity {
     private CountDownTimer countDownTimer;  // Temporizador
     private long tiempoTotal = 0;
     private long tiempoRestante = 10;
-    AppDatabase appDatabase;
+    private AppDatabase appDatabase;
+    SharedPreferences sharedPreferences;
 
 
     @SuppressLint("MissingInflatedId")
@@ -79,9 +82,13 @@ public class PreguntaActivity extends AppCompatActivity {
         puntajeText = findViewById(R.id.txt_puntaje);
         tiempoText = findViewById(R.id.txt_tiempo);
 
+        appDatabase = AppDatabase.getDatabase(getApplicationContext());
+
+
         // Obtener datos desde el intent
         categoria = getIntent().getStringExtra("CATEGORIA_SELECCIONADA");
         dificultad = getIntent().getStringExtra("DIFICULTAD_SELECCIONADA");
+
         idUsuario = getIntent().getLongExtra("ID", -1L);
 
         categoriaText.setText(categoria);
@@ -103,9 +110,7 @@ public class PreguntaActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     preguntas = response.body();
 
-                    // Guarda las preguntas obtenidas del servidor en Room
                     guardarPreguntasEnRoom(preguntas);
-
                     mostrarPregunta();
                 } else {
                     Toast.makeText(PreguntaActivity.this, "No se encontraron preguntas en el servidor, cargando desde Room.", Toast.LENGTH_SHORT).show();
@@ -306,6 +311,10 @@ public class PreguntaActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Toast.makeText(PreguntaActivity.this, "Historial registrado correctamente.", Toast.LENGTH_SHORT).show();
                 }
+                else{
+                    guardarHistorialLocalmente(historial);
+                    Toast.makeText(PreguntaActivity.this, "Historial guardado exitosamente sin internet.", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -317,7 +326,15 @@ public class PreguntaActivity extends AppCompatActivity {
     }
 
     private void guardarHistorialLocalmente(Historial historial) {
-        // Crear objeto HistorialRoom con los datos necesarios
+        if ((false) || (historial.getFecha() == null) || (historial.getId_usuario() == null) || (historial.getId_pregunta() == null)) {
+            Toast.makeText(PreguntaActivity.this, "No se puede guardar: datos incompletos.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Obtener el username de SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String username = sharedPreferences.getString("username", "Invitado");
+
         HistorialRoom historialRoom = new HistorialRoom(
                 null,
                 historial.getPuntaje(),
@@ -326,19 +343,29 @@ public class PreguntaActivity extends AppCompatActivity {
                 historial.getAyudas(),
                 historial.getId_usuario(),
                 historial.getId_pregunta(),
-                historial.getUsername(),
+                username,
                 historial.getCategoria(),
                 historial.getDificultad()
         );
 
         new Thread(() -> {
-            appDatabase.historialDao().insertHistorial(historialRoom);
-            runOnUiThread(() -> {
-                Toast.makeText(PreguntaActivity.this, "Historial guardado localmente.", Toast.LENGTH_SHORT).show();
-            });
-        }).start();
-    }
+            try {
+                appDatabase.historialDao().insertHistorial(historialRoom);
+                runOnUiThread(() -> {
+                    Toast.makeText(PreguntaActivity.this, "Historial guardado localmente.", Toast.LENGTH_SHORT).show();
+                });
+            } catch (Exception e) {
+                // Registrar el error en el log
+                Log.e("PreguntaActivity", "Error al guardar historial", e); // Cambia el TAG según sea necesario
 
+                runOnUiThread(() -> {
+                    // Mostrar un Toast con un mensaje genérico al usuario
+                    Toast.makeText(PreguntaActivity.this, "Ocurrió un error al guardar el historial.", Toast.LENGTH_LONG).show();
+                });
+            }
+        }).start();
+
+    }
     public void eliminarunapregunta(View view) {
 
         if (!ayudaUsada) {  // Verificar que no se haya usado una ayuda en la pregunta actual
