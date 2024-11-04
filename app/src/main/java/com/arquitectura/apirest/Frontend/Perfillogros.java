@@ -105,11 +105,12 @@ public class Perfillogros extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
-                Toast.makeText(Perfillogros.this, "Error de conexión", Toast.LENGTH_SHORT).show();
+
             }
         });
     }
 }
+
 
 
 

@@ -1,6 +1,7 @@
 package com.arquitectura.apirest.Frontend;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -306,10 +307,8 @@ public class PreguntaActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Historial> call, Response<Historial> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(PreguntaActivity.this, "Historial registrado correctamente.", Toast.LENGTH_SHORT).show();
-                } else {
                     guardarHistorialLocalmente(historial);
-                    Toast.makeText(PreguntaActivity.this, "Historial guardado exitosamente sin internet.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PreguntaActivity.this, "Historial registrado correctamente.", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -470,6 +469,23 @@ public class PreguntaActivity extends AppCompatActivity {
         puntaje -= 5;  // Descontar 5 puntos si el tiempo se acaba
         puntajeText.setText("Puntaje: " + puntaje);
         mostrarSiguientePregunta();  // Mostrar la siguiente pregunta cuando el tiempo termina
+    }
+
+    public void volver1 (View view){
+
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+
+        historialRegistrado = true;
+
+        // Mostrar mensaje opcional
+        Toast.makeText(this, "Has vuelto al menú sin terminar  el historial.", Toast.LENGTH_SHORT).show();
+
+        // Crea un Intent para ir al menú
+        Intent intent = new Intent(this, MenuActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 }
