@@ -11,6 +11,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.arquitectura.apirest.MusicaApp.MusicService;
 import com.arquitectura.apirest.R;
 
 public class MenuActivity extends AppCompatActivity {
@@ -29,6 +30,9 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_menu);
+
+        Intent serviceIntent = new Intent(this, MusicService.class);
+        startService(serviceIntent);
 
         sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         helloUserName = findViewById(R.id.helloUserName);

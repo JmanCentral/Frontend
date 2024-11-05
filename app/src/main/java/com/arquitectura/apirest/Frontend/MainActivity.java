@@ -15,6 +15,7 @@ import androidx.room.Room;
 
 import com.arquitectura.apirest.Databsae.AppDatabase;
 import com.arquitectura.apirest.Entidades.Usuario;
+import com.arquitectura.apirest.MusicaApp.MusicService;
 import com.arquitectura.apirest.R;
 import com.arquitectura.apirest.Room.UsuarioRoom;
 
@@ -40,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent serviceIntent = new Intent(this, MusicService.class);
+        startService(serviceIntent);
 
         sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 

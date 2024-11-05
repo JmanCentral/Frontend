@@ -16,6 +16,8 @@
         android:theme="@style/Theme.APIREST"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <service android:name=".MusicaApp.MusicService" />
+
         <activity
             android:name=".Frontend.ResultadoActivity"
             android:exported="false" />

@@ -22,6 +22,7 @@ import com.arquitectura.apirest.DAOS.PreguntaDao;
 import com.arquitectura.apirest.Databsae.AppDatabase;
 import com.arquitectura.apirest.Entidades.Historial;
 import com.arquitectura.apirest.Entidades.Pregunta;
+import com.arquitectura.apirest.MusicaApp.MusicService;
 import com.arquitectura.apirest.R;
 import com.arquitectura.apirest.Room.HistorialRoom;
 import com.arquitectura.apirest.Room.PreguntaRoom;
@@ -69,6 +70,10 @@ public class PreguntaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pregunta);
+
+        Intent serviceIntent = new Intent(this, MusicService.class);
+        serviceIntent.putExtra("MUSIC_RESOURCE", R.raw.musica); // Recurso de música diferente
+        startService(serviceIntent);
 
         tiempoInicio = System.currentTimeMillis();
         // Inicialización de vistas
@@ -304,6 +309,8 @@ public class PreguntaActivity extends AppCompatActivity {
                     historialRegistrado = true;
                 }
                 Toast.makeText(PreguntaActivity.this, "Juego terminado", Toast.LENGTH_SHORT).show();
+                Intent serviceIntent = new Intent(this, MusicService.class);
+                stopService(serviceIntent);
                 finish();
             }
         }, 500);
@@ -503,6 +510,8 @@ public class PreguntaActivity extends AppCompatActivity {
         // Mostrar mensaje opcional
         Toast.makeText(this, "Has vuelto al menú sin terminar  el historial.", Toast.LENGTH_SHORT).show();
 
+        Intent serviceIntent = new Intent(this, MusicService.class);
+        stopService(serviceIntent);
         // Crea un Intent para ir al menú
         Intent intent = new Intent(this, MenuActivity.class);
         startActivity(intent);
