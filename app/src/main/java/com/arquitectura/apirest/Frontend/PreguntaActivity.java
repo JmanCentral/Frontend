@@ -15,7 +15,9 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import com.arquitectura.apirest.DAOS.PreguntaDao;
 import com.arquitectura.apirest.Databsae.AppDatabase;
 import com.arquitectura.apirest.Entidades.Historial;
@@ -54,8 +56,8 @@ public class PreguntaActivity extends AppCompatActivity {
     private int ayudas = 0;
     private boolean ayudaUsada = false;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-    private CountDownTimer countDownTimer;  // Temporizador
-    private long tiempoTotal = 0;
+    private CountDownTimer countDownTimer;
+    private long tiempoInicio;
     private long tiempoRestante = 10;
     private AppDatabase appDatabase;
     SharedPreferences sharedPreferences;
@@ -68,6 +70,7 @@ public class PreguntaActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pregunta);
 
+        tiempoInicio = System.currentTimeMillis();
         // Inicialización de vistas
         categoriaText = findViewById(R.id.categoria);
         questionNumber = findViewById(R.id.questionNumber);
@@ -112,6 +115,9 @@ public class PreguntaActivity extends AppCompatActivity {
                     preguntas = response.body();
 
                     guardarPreguntasEnRoom(preguntas);
+
+                    sincronizarPreguntasEnRoom(preguntas);
+
                     mostrarPregunta();
                 } else {
                     Toast.makeText(PreguntaActivity.this, "No se encontraron preguntas en el servidor, cargando desde Room.", Toast.LENGTH_SHORT).show();
@@ -126,6 +132,31 @@ public class PreguntaActivity extends AppCompatActivity {
                 cargarPreguntasDesdeRoom();
             }
         });
+    }
+
+    private void sincronizarPreguntasEnRoom(List<Pregunta> preguntasDelBackend) {
+        AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+        new Thread(() -> {
+            List<PreguntaRoom> preguntasExistentes = db.preguntaDao().obtenerTodasLasPreguntas(); // Método para obtener todas las preguntas
+            Set<String> preguntasDelBackendSet = preguntasDelBackend.stream()
+                    .map(Pregunta::getPregunta) // Suponiendo que tienes un método que obtiene el texto de la pregunta
+                    .collect(Collectors.toSet());
+
+            for (PreguntaRoom pregunta : preguntasExistentes) {
+                if (!preguntasDelBackendSet.contains(pregunta.getPregunta())) {
+                    // La pregunta no está en el backend, la eliminamos
+                    eliminarPreguntaEnRoom(pregunta);
+                }
+            }
+        }).start();
+    }
+
+    // Método para eliminar una pregunta en Room
+    private void eliminarPreguntaEnRoom(PreguntaRoom pregunta) {
+        AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+        new Thread(() -> {
+            db.preguntaDao().eliminarPregunta(pregunta); // Usando el método @Delete
+        }).start();
     }
 
     private void cargarPreguntasDesdeRoom() {
@@ -167,7 +198,6 @@ public class PreguntaActivity extends AppCompatActivity {
                     );
                     db.preguntaDao().insertarPregunta(nuevaPreguntaRoom);
                 } else {
-                    // Si existe, puedes optar por actualizarla
                     preguntaExistente.setOp1(pregunta.getOp1());
                     preguntaExistente.setOp2(pregunta.getOp2());
                     preguntaExistente.setOp3(pregunta.getOp3());
@@ -295,10 +325,10 @@ public class PreguntaActivity extends AppCompatActivity {
         String fecha = dateFormat.format(new Date());
 
         // Aquí se utiliza tiempoRestante que es un entero
-        int tiempo = (int) Math.toIntExact(tiempoRestante);  // El tiempo restante en segundos, que es un entero
+        int tiempoTotal = (int) ((System.currentTimeMillis() - tiempoInicio) / 1000);  // El tiempo restante en segundos, que es un entero
 
         Historial historial = new Historial(
-                null, puntaje, fecha, tiempo, ayudas, idUsuario, pregunta.getId_pregunta(),
+                null, puntaje, fecha, tiempoTotal, ayudas, idUsuario, pregunta.getId_pregunta(),
                 "Usuario", categoria, dificultad
         );
 
@@ -344,6 +374,7 @@ public class PreguntaActivity extends AppCompatActivity {
                 historial.getDificultad()
         );
 
+
         new Thread(() -> {
             try {
                 appDatabase.historialDao().insertHistorial(historialRoom);
@@ -381,7 +412,7 @@ public class PreguntaActivity extends AppCompatActivity {
             // Seleccionar una opción incorrecta al azar
             if (!opcionesIncorrectas.isEmpty()) {
                 int randomIndex = new Random().nextInt(opcionesIncorrectas.size());
-                opcionesIncorrectas.get(randomIndex).setCardBackgroundColor(Color.RED);
+                opcionesIncorrectas.get(randomIndex).setCardBackgroundColor(Color.GRAY);
             }
 
             puntaje -= 3;  // Descontar 3 puntos por usar esta ayuda
@@ -410,8 +441,8 @@ public class PreguntaActivity extends AppCompatActivity {
             // Seleccionar dos opciones incorrectas al azar
             if (opcionesIncorrectas.size() >= 2) {
                 Collections.shuffle(opcionesIncorrectas);
-                opcionesIncorrectas.get(0).setCardBackgroundColor(Color.RED);
-                opcionesIncorrectas.get(1).setCardBackgroundColor(Color.RED);
+                opcionesIncorrectas.get(0).setCardBackgroundColor(Color.GRAY);
+                opcionesIncorrectas.get(1).setCardBackgroundColor(Color.GRAY);
             }
 
             puntaje -= 5;  // Descontar 5 puntos por usar esta ayuda
@@ -420,27 +451,27 @@ public class PreguntaActivity extends AppCompatActivity {
     }
     private void iniciarTemporizador() {
         if (countDownTimer != null) {
-            countDownTimer.cancel();  // Cancela el temporizador anterior si existe
+            countDownTimer.cancel();
         }
 
-        tiempoRestante = 10;  // Reinicia el tiempo a 10 segundos
-        tiempoText.setText(String.valueOf(tiempoRestante));  // Muestra el tiempo inicial en segundos
+        tiempoRestante = 10;
+        tiempoText.setText(String.valueOf(tiempoRestante));
 
-        countDownTimer = new CountDownTimer(tiempoRestante * 1000, 1000) {  // 10 segundos, cuenta regresiva cada 1 segundo
+        countDownTimer = new CountDownTimer(tiempoRestante * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                tiempoRestante = (int) (millisUntilFinished / 1000);  // Actualiza el tiempo restante en segundos
-                tiempoText.setText(String.valueOf(tiempoRestante));  // Muestra el tiempo restante en segundos
+                tiempoRestante = (int) (millisUntilFinished / 1000);
+                tiempoText.setText(String.valueOf(tiempoRestante));
             }
 
             @Override
             public void onFinish() {
-                tiempoRestante = 0;  // El tiempo ha llegado a cero
-                tiempoText.setText(String.valueOf(tiempoRestante));  // Muestra 0 segundos
+                tiempoRestante = 0;
+                tiempoText.setText(String.valueOf(tiempoRestante));
                 Toast.makeText(PreguntaActivity.this, "Tiempo alcanzado", Toast.LENGTH_SHORT).show();
-                puntaje -= 5;  // Descontar 5 puntos si el tiempo se acaba
+                puntaje -= 5;
                 puntajeText.setText("Puntaje: " + puntaje);
-                mostrarSiguientePregunta();  // Muestra la siguiente pregunta cuando el tiempo termina
+                mostrarSiguientePregunta();
             }
         }.start();
     }
@@ -449,7 +480,6 @@ public class PreguntaActivity extends AppCompatActivity {
 
     private boolean historialRegistrado = false;
     private void mostrarSiguientePregunta() {
-        tiempoTotal += (10 - tiempoRestante);  // Sumar el tiempo usado para responder esta pregunta
 
         if (preguntaActual < preguntas.size() - 1) {
             preguntaActual++;
@@ -462,21 +492,12 @@ public class PreguntaActivity extends AppCompatActivity {
         }
     }
 
-    public void onFinish() {
-        tiempoRestante = 0;
-        tiempoText.setText(String.valueOf(tiempoRestante));
-        Toast.makeText(PreguntaActivity.this, "Tiempo alcanzado", Toast.LENGTH_SHORT).show();
-        puntaje -= 5;  // Descontar 5 puntos si el tiempo se acaba
-        puntajeText.setText("Puntaje: " + puntaje);
-        mostrarSiguientePregunta();  // Mostrar la siguiente pregunta cuando el tiempo termina
-    }
 
     public void volver1 (View view){
 
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
-
         historialRegistrado = true;
 
         // Mostrar mensaje opcional

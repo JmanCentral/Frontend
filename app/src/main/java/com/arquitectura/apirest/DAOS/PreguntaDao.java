@@ -24,6 +24,7 @@ public interface PreguntaDao {
     @Delete
     void eliminarPregunta(PreguntaRoom pregunta);
 
+
     @Query("SELECT * FROM preguntas WHERE pregunta = :preguntaText AND categoria = :categoria")
     PreguntaRoom obtenerPreguntaPorTextoYCategoria(String preguntaText, String categoria);
 

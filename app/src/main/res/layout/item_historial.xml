@@ -7,6 +7,8 @@
     android:padding="8dp">
 
     <!-- Sección Izquierda   -->
+
+    <!-- Sección Derecha -->
     <LinearLayout
         android:id="@+id/left"
         android:layout_width="wrap_content"
@@ -14,7 +16,6 @@
         android:gravity="center|left"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/right"
         app:layout_constraintTop_toBottomOf="@id/Layout">
 
@@ -75,15 +76,14 @@
             android:textSize="20sp" />
     </LinearLayout>
 
-    <!-- Sección Derecha -->
     <LinearLayout
         android:id="@+id/right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
         android:orientation="vertical"
         android:padding="16dp"
         app:layout_constraintLeft_toRightOf="@id/left"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/Layout"
         tools:ignore="NotSibling">
 
@@ -151,5 +151,17 @@
             android:textSize="20sp" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="145dp"
+        android:layout_marginEnd="50dp"
+        android:text="Segundos"
+        android:textColor="#f63a98"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
