@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         String nombreUsuario = username.getText().toString();
         String contrasenaUsuario = password.getText().toString();
 
-        Usuario usuario = new Usuario(null, nombreUsuario, contrasenaUsuario, null , "Novato" , null , null);
+        Usuario usuario = new Usuario(null, nombreUsuario, contrasenaUsuario, null , "Novato" , null , null , null , null , null);
 
         Call<Usuario> call = usuarioService.loginUsuario(usuario);
 

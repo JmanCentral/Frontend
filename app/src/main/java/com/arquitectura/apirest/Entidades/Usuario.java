@@ -9,8 +9,11 @@ public class Usuario {
     private String nivel;
     private String logro1;
     private String logro2;
+    private String logro3;
+    private String logro4;
+    private String logro5;
 
-    public Usuario(Long id, String username, String password, String email, String nivel, String logro1, String logro2) {
+    public Usuario(Long id, String username, String password, String email, String nivel, String logro1, String logro2, String logro3, String logro4, String logro5) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -18,9 +21,9 @@ public class Usuario {
         this.nivel = nivel;
         this.logro1 = logro1;
         this.logro2 = logro2;
-    }
-
-    public Usuario() {
+        this.logro3 = logro3;
+        this.logro4 = logro4;
+        this.logro5 = logro5;
     }
 
     public Long getId() {
@@ -77,6 +80,30 @@ public class Usuario {
 
     public void setLogro2(String logro2) {
         this.logro2 = logro2;
+    }
+
+    public String getLogro3() {
+        return logro3;
+    }
+
+    public void setLogro3(String logro3) {
+        this.logro3 = logro3;
+    }
+
+    public String getLogro4() {
+        return logro4;
+    }
+
+    public void setLogro4(String logro4) {
+        this.logro4 = logro4;
+    }
+
+    public String getLogro5() {
+        return logro5;
+    }
+
+    public void setLogro5(String logro5) {
+        this.logro5 = logro5;
     }
 }
 

@@ -68,7 +68,7 @@ public class Registro extends AppCompatActivity {
         }
 
         // Crear objeto Usuario
-        Usuario nuevoUsuario = new Usuario(null, nombreUsuario, contrasena, correo, "Novato" , "Sin desbloquear" , "Sin desbloquear");
+        Usuario nuevoUsuario = new Usuario(null, nombreUsuario, contrasena, correo, "Novato" , "Sin desbloquear" , "Sin desbloquear","Sin desbloquear" , "Sin desbloquear", "Sin desbloquear");
 
         // Llamada al servicio de registro
         Call<Usuario> call = usuarioService.registrarUsuario(nuevoUsuario);
@@ -100,7 +100,7 @@ public class Registro extends AppCompatActivity {
     }
 
     private void guardarUsuarioLocalmente(Usuario nuevoUsuario) {
-        UsuarioRoom usuarioRoom = new UsuarioRoom(null, nuevoUsuario.getUsername(), nuevoUsuario.getPassword(), nuevoUsuario.getEmail(), "Novato" , "Sin desbloquear" , "Sin desbloquear");
+        UsuarioRoom usuarioRoom = new UsuarioRoom(null, nuevoUsuario.getUsername(), nuevoUsuario.getPassword(), nuevoUsuario.getEmail(), "Novato" , "Sin desbloquear" , "Sin desbloquear" , "Sin desbloquear" , "Sin desbloquear" , "Sin desbloquear");
 
         new Thread(() -> {
             appDatabase.usuarioDao().insertUsuario(usuarioRoom);
