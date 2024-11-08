@@ -122,7 +122,6 @@ public class HistorialActivity extends AppCompatActivity {
                         historial.setId_usuario(historialRoom.getId_usuario());
                         historial.setUsername(historialRoom.getUsername());
                         historial.setFecha(historialRoom.getFecha());
-                        // Agregar a la lista de historial
                         historialList.add(historial);
                     }
 
@@ -140,7 +139,7 @@ public class HistorialActivity extends AppCompatActivity {
         }).start();
     }
 
-
+    // Método para regresar
     public void regresar(View view) {
         Intent intent = new Intent(this, MenuActivity.class);
         startActivity(intent);

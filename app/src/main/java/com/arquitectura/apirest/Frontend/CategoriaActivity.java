@@ -66,12 +66,12 @@ public class CategoriaActivity extends AppCompatActivity {
     private void abrirTrivia(String categoria) {
 
         // Obtener el ID y el nombre de usuario desde el Intent anterior
-        long idUsuario = getIntent().getLongExtra("ID", -1); // Cambia el valor predeterminado a -1 para detección de errores
+        long idUsuario = getIntent().getLongExtra("ID", -1);
         String username = getIntent().getStringExtra("username");
 
         if (idUsuario == -1) {
             Toast.makeText(this, "ID de usuario no válido", Toast.LENGTH_SHORT).show();
-            return; // No continuar si el ID no es válido
+            return;
         }
         Intent intent = new Intent(CategoriaActivity.this, PreguntaActivity.class);
         intent.putExtra("username", getIntent().getStringExtra("username"));

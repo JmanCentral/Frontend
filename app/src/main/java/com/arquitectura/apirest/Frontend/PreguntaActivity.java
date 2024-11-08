@@ -76,7 +76,6 @@ public class PreguntaActivity extends AppCompatActivity {
         startService(serviceIntent);
 
         tiempoInicio = System.currentTimeMillis();
-        // Inicialización de vistas
         categoriaText = findViewById(R.id.categoria);
         questionNumber = findViewById(R.id.questionNumber);
         questionText = findViewById(R.id.questionText);
@@ -102,12 +101,10 @@ public class PreguntaActivity extends AppCompatActivity {
 
         categoriaText.setText(categoria);
 
-        // Configurar Retrofit
         preguntaService = APIS.getPreguntaService();
         historialService = APIS.getHistorialService();
         cargarPreguntas();
 
-        // Configurar eventos de clic para las opciones
         configurarClickOpciones();
     }
 
@@ -132,7 +129,6 @@ public class PreguntaActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Pregunta>> call, Throwable t) {
-                // Si falla la conexión con el servidor, cargar las preguntas desde Room
                 Toast.makeText(PreguntaActivity.this, "Error al conectar con el servidor, cargando preguntas desde Room.", Toast.LENGTH_SHORT).show();
                 cargarPreguntasDesdeRoom();
             }
@@ -142,25 +138,25 @@ public class PreguntaActivity extends AppCompatActivity {
     private void sincronizarPreguntasEnRoom(List<Pregunta> preguntasDelBackend) {
         AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
         new Thread(() -> {
-            List<PreguntaRoom> preguntasExistentes = db.preguntaDao().obtenerTodasLasPreguntas(); // Método para obtener todas las preguntas
+            List<PreguntaRoom> preguntasExistentes = db.preguntaDao().obtenerTodasLasPreguntas();
             Set<String> preguntasDelBackendSet = preguntasDelBackend.stream()
-                    .map(Pregunta::getPregunta) // Suponiendo que tienes un método que obtiene el texto de la pregunta
+                    .map(Pregunta::getPregunta)
                     .collect(Collectors.toSet());
 
             for (PreguntaRoom pregunta : preguntasExistentes) {
                 if (!preguntasDelBackendSet.contains(pregunta.getPregunta())) {
-                    // La pregunta no está en el backend, la eliminamos
+
                     eliminarPreguntaEnRoom(pregunta);
                 }
             }
         }).start();
     }
 
-    // Método para eliminar una pregunta en Room
+
     private void eliminarPreguntaEnRoom(PreguntaRoom pregunta) {
         AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
         new Thread(() -> {
-            db.preguntaDao().eliminarPregunta(pregunta); // Usando el método @Delete
+            db.preguntaDao().eliminarPregunta(pregunta);
         }).start();
     }
 
@@ -170,7 +166,7 @@ public class PreguntaActivity extends AppCompatActivity {
             List<PreguntaRoom> preguntasRoom = db.preguntaDao().obtenerPreguntasPorCategoriaYDificultad(categoria, dificultad);
             runOnUiThread(() -> {
                 if (preguntasRoom != null && !preguntasRoom.isEmpty()) {
-                    // Convertir PreguntaRoom a Pregunta para reutilizar en la lógica existente
+
                     preguntas = convertirPreguntasRoomAPreguntas(preguntasRoom);
                     mostrarPregunta();
                 } else {
@@ -215,7 +211,7 @@ public class PreguntaActivity extends AppCompatActivity {
         }).start();
     }
 
-    // Convertir PreguntaRoom a Pregunta
+
     private List<Pregunta> convertirPreguntasRoomAPreguntas(List<PreguntaRoom> preguntasRoom) {
         List<Pregunta> listaPreguntas = new ArrayList<>();
         for (PreguntaRoom preguntaRoom : preguntasRoom) {
@@ -290,13 +286,14 @@ public class PreguntaActivity extends AppCompatActivity {
         if (respuestaUsuario.equals(respuestaCorrecta)) {
             puntaje += 10;
             opcionSeleccionada.setCardBackgroundColor(Color.GREEN);
+
         } else {
             puntaje -= 5;
             opcionSeleccionada.setCardBackgroundColor(Color.RED);
             mostrarRespuestaCorrecta(respuestaCorrecta);
         }
 
-        // Actualizar puntaje en puntajeText
+
         puntajeText.setText("Puntaje: " + puntaje);
 
         new Handler().postDelayed(() -> {
@@ -490,11 +487,11 @@ public class PreguntaActivity extends AppCompatActivity {
 
         if (preguntaActual < preguntas.size() - 1) {
             preguntaActual++;
-            mostrarPregunta();  // Mostrar la nueva pregunta
+            mostrarPregunta();
         } else {
             if (!historialRegistrado) {
-                registrarHistorial();  // Registrar el historial al terminar todas las preguntas
-                historialRegistrado = true;  // Marcar como registrado para evitar duplicados
+                registrarHistorial();
+                historialRegistrado = true;
             }
         }
     }

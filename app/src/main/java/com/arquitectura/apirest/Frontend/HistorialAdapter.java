@@ -28,7 +28,7 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
     @Override
     public HistorialViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.item_historial, parent, false); // Reemplaza con el nombre de tu layout XML
+        View view = inflater.inflate(R.layout.item_historial, parent, false);
         return new HistorialViewHolder(view);
     }
 
@@ -36,7 +36,7 @@ public class HistorialAdapter extends RecyclerView.Adapter<HistorialAdapter.Hist
     public void onBindViewHolder(@NonNull HistorialViewHolder holder, int position) {
         Historial historial = historiales.get(position);
 
-        // Configura los elementos de la vista con los datos del historial
+        // Configurar los elementos de la vista con los datos del historial
 
         holder.username.setText(historial.getUsername());
         holder.puntosTotales.setText(String.valueOf(historial.getPuntaje()));
