@@ -21,15 +21,15 @@ public interface PreguntaDao {
     @Update
     void actualizarPregunta(PreguntaRoom pregunta);
 
-    @Delete
-    void eliminarPregunta(PreguntaRoom pregunta);
-
 
     @Query("SELECT * FROM preguntas WHERE pregunta = :preguntaText AND categoria = :categoria")
     PreguntaRoom obtenerPreguntaPorTextoYCategoria(String preguntaText, String categoria);
 
-    @Query("SELECT * FROM preguntas WHERE categoria = :categoria AND dificultad = :dificultad")
+    @Query("SELECT * FROM Preguntas WHERE categoria = :categoria AND dificultad = :dificultad")
     List<PreguntaRoom> obtenerPreguntasPorCategoriaYDificultad(String categoria, String dificultad);
+
+    @Query("SELECT * FROM Preguntas WHERE categoria = :categoria AND dificultad = :dificultad AND estado = 1")
+    List<PreguntaRoom> obtenerPreguntasPorCategoriaYDificultadConEstadoTrue(String categoria, String dificultad);
 
     @Query("SELECT * FROM preguntas")
     List<PreguntaRoom> obtenerTodasLasPreguntas();

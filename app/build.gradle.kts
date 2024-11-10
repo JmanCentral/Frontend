@@ -44,6 +44,8 @@ dependencies {
     androidTestImplementation ("androidx.room:room-testing:$rootProject.roomVersion")
     implementation("androidx.room:room-runtime:2.5.0")
     annotationProcessor("androidx.room:room-compiler:2.5.0")
+    implementation ("org.projectlombok:lombok:1.18.24")
+    annotationProcessor ("org.projectlombok:lombok:1.18.24")
     implementation(libs.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         signUp = findViewById(R.id.signUp);
         usuarioService = APIS.getUsuarioService();
 
-        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "app_database").build();
+        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "TriviaAPP").build();
 
         // Verificar si ya existe un usuario registrado
         if (sharedPreferences.contains("username")) {

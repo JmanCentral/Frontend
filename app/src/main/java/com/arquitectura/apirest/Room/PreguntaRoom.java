@@ -16,11 +16,9 @@ public class PreguntaRoom {
     private String respuesta;
     private String dificultad;
     private String categoria;
+    private boolean estado;
 
-    // Constructor
-
-    public PreguntaRoom(Long id, String pregunta, String op1, String op2, String op3, String op4, String respuesta, String dificultad, String categoria) {
-
+    public PreguntaRoom(Long id, String pregunta, String op1, String op2, String op3, String op4, String respuesta, String dificultad, String categoria, boolean estado) {
         this.id = id;
         this.pregunta = pregunta;
         this.op1 = op1;
@@ -30,10 +28,12 @@ public class PreguntaRoom {
         this.respuesta = respuesta;
         this.dificultad = dificultad;
         this.categoria = categoria;
+        this.estado = estado;
     }
 
-    // Getters y Setters
+    public PreguntaRoom() {
 
+    }
 
     public Long getId() {
         return id;
@@ -105,6 +105,14 @@ public class PreguntaRoom {
 
     public void setCategoria(String categoria) {
         this.categoria = categoria;
+    }
+
+    public boolean isEstado() {
+        return estado;
+    }
+
+    public void setEstado(boolean estado) {
+        this.estado = estado;
     }
 }
 

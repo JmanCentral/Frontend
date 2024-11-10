@@ -53,33 +53,44 @@
         android:id="@+id/difficultySpinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginTop="50dp"
         android:background="#f63a98"
         android:entries="@array/difficulty_options"
         android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
+    <Button
+        android:id="@+id/button"
+        android:layout_width="219dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="16dp"
+        android:onClick="Actualiarpreguntas"
+        android:text="Actualizar preguntas"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/difficultySpinner" />
+
+
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="441dp"
         android:layout_height="777dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="150dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/difficultySpinner">
+        app:layout_constraintTop_toBottomOf="@+id/button">
 
         <LinearLayout
             android:id="@+id/rulesLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:background="#f63a98"
+            android:orientation="vertical"
             android:paddingBottom="16dp">
 
             <!-- CardView Matemáticas -->

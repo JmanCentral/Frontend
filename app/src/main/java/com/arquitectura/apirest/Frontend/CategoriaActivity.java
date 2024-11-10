@@ -80,4 +80,9 @@ public class CategoriaActivity extends AppCompatActivity {
         intent.putExtra("DIFICULTAD_SELECCIONADA", dificultadSeleccionada);
         startActivity(intent);
     }
+
+    public void Actualiarpreguntas(View view) {
+
+
+    }
 }

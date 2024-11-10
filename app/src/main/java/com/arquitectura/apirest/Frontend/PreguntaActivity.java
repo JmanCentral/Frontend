@@ -38,9 +38,11 @@ import java.util.Random;
 import Utils.APIS;
 import Utils.HistorialService;
 import Utils.PreguntaService;
+import lombok.AllArgsConstructor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 
 public class PreguntaActivity extends AppCompatActivity {
 
@@ -92,8 +94,6 @@ public class PreguntaActivity extends AppCompatActivity {
 
         appDatabase = AppDatabase.getDatabase(getApplicationContext());
 
-
-        // Obtener datos desde el intent
         categoria = getIntent().getStringExtra("CATEGORIA_SELECCIONADA");
         dificultad = getIntent().getStringExtra("DIFICULTAD_SELECCIONADA");
 
@@ -118,8 +118,6 @@ public class PreguntaActivity extends AppCompatActivity {
 
                     guardarPreguntasEnRoom(preguntas);
 
-                    sincronizarPreguntasEnRoom(preguntas);
-
                     mostrarPregunta();
                 } else {
                     Toast.makeText(PreguntaActivity.this, "No se encontraron preguntas en el servidor, cargando desde Room.", Toast.LENGTH_SHORT).show();
@@ -135,38 +133,14 @@ public class PreguntaActivity extends AppCompatActivity {
         });
     }
 
-    private void sincronizarPreguntasEnRoom(List<Pregunta> preguntasDelBackend) {
-        AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-        new Thread(() -> {
-            List<PreguntaRoom> preguntasExistentes = db.preguntaDao().obtenerTodasLasPreguntas();
-            Set<String> preguntasDelBackendSet = preguntasDelBackend.stream()
-                    .map(Pregunta::getPregunta)
-                    .collect(Collectors.toSet());
-
-            for (PreguntaRoom pregunta : preguntasExistentes) {
-                if (!preguntasDelBackendSet.contains(pregunta.getPregunta())) {
-
-                    eliminarPreguntaEnRoom(pregunta);
-                }
-            }
-        }).start();
-    }
-
-
-    private void eliminarPreguntaEnRoom(PreguntaRoom pregunta) {
-        AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
-        new Thread(() -> {
-            db.preguntaDao().eliminarPregunta(pregunta);
-        }).start();
-    }
 
     private void cargarPreguntasDesdeRoom() {
         AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
         new Thread(() -> {
-            List<PreguntaRoom> preguntasRoom = db.preguntaDao().obtenerPreguntasPorCategoriaYDificultad(categoria, dificultad);
+            // Solo obtener preguntas con estado true
+            List<PreguntaRoom> preguntasRoom = db.preguntaDao().obtenerPreguntasPorCategoriaYDificultadConEstadoTrue(categoria, dificultad);
             runOnUiThread(() -> {
                 if (preguntasRoom != null && !preguntasRoom.isEmpty()) {
-
                     preguntas = convertirPreguntasRoomAPreguntas(preguntasRoom);
                     mostrarPregunta();
                 } else {
@@ -177,15 +151,31 @@ public class PreguntaActivity extends AppCompatActivity {
         }).start();
     }
 
+
     // Método para guardar preguntas en Room
     private void guardarPreguntasEnRoom(List<Pregunta> preguntas) {
         AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
         new Thread(() -> {
+            // Obtener todas las preguntas en Room por categoría y dificultad
+            List<PreguntaRoom> preguntasRoomExistentes = db.preguntaDao().obtenerPreguntasPorCategoriaYDificultad(categoria, dificultad);
+
+            // Crear un conjunto con los textos de las preguntas recibidas desde el servidor
+            Set<String> preguntasServidorSet = preguntas.stream()
+                    .map(Pregunta::getPregunta)
+                    .collect(Collectors.toSet());
+
+            // Marcar como false las preguntas en Room que no están en el conjunto de preguntas del servidor
+            for (PreguntaRoom preguntaRoom : preguntasRoomExistentes) {
+                if (!preguntasServidorSet.contains(preguntaRoom.getPregunta())) {
+                    preguntaRoom.setEstado(false);
+                    db.preguntaDao().actualizarPregunta(preguntaRoom);
+                }
+            }
+
+            // Guardar o actualizar las preguntas recibidas del servidor
             for (Pregunta pregunta : preguntas) {
-                // Verificar si la pregunta ya existe en Room
                 PreguntaRoom preguntaExistente = db.preguntaDao().obtenerPreguntaPorTextoYCategoria(pregunta.getPregunta(), pregunta.getCategoria());
                 if (preguntaExistente == null) {
-                    // Si no existe, insertar la nueva pregunta
                     PreguntaRoom nuevaPreguntaRoom = new PreguntaRoom(
                             null,
                             pregunta.getPregunta(),
@@ -195,7 +185,8 @@ public class PreguntaActivity extends AppCompatActivity {
                             pregunta.getOp4(),
                             pregunta.getRespuesta(),
                             pregunta.getDificultad(),
-                            pregunta.getCategoria()
+                            pregunta.getCategoria(),
+                            pregunta.isEstado()
                     );
                     db.preguntaDao().insertarPregunta(nuevaPreguntaRoom);
                 } else {
@@ -205,11 +196,13 @@ public class PreguntaActivity extends AppCompatActivity {
                     preguntaExistente.setOp4(pregunta.getOp4());
                     preguntaExistente.setRespuesta(pregunta.getRespuesta());
                     preguntaExistente.setDificultad(pregunta.getDificultad());
+                    preguntaExistente.setEstado(pregunta.isEstado());
                     db.preguntaDao().actualizarPregunta(preguntaExistente);
                 }
             }
         }).start();
     }
+
 
 
     private List<Pregunta> convertirPreguntasRoomAPreguntas(List<PreguntaRoom> preguntasRoom) {
@@ -224,15 +217,14 @@ public class PreguntaActivity extends AppCompatActivity {
                     preguntaRoom.getOp4(),
                     preguntaRoom.getRespuesta(),
                     preguntaRoom.getDificultad(),
-                    preguntaRoom.getCategoria()
+                    preguntaRoom.getCategoria(),
+                    preguntaRoom.isEstado()
             );
             listaPreguntas.add(pregunta);
+            Collections.shuffle(listaPreguntas);
         }
         return listaPreguntas;
     }
-
-
-
 
 
     private void mostrarPregunta() {
@@ -399,9 +391,9 @@ public class PreguntaActivity extends AppCompatActivity {
     }
     public void eliminarunapregunta(View view) {
 
-        if (!ayudaUsada) {  // Verificar que no se haya usado una ayuda en la pregunta actual
-            ayudaUsada = true;  // Marcar que la ayuda fue usada
-            ayudas++;  // Incrementar el contador de ayudas
+        if (!ayudaUsada) {
+            ayudaUsada = true;
+            ayudas++;
 
             Pregunta pregunta = preguntas.get(preguntaActual);
             String respuestaCorrecta = pregunta.getRespuesta();

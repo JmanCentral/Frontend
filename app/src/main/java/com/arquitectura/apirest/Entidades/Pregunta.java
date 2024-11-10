@@ -11,8 +11,9 @@ public class Pregunta {
     private String respuesta;
     private String categoria;
     private String dificultad;
+    private boolean estado;
 
-    public Pregunta(Long id_pregunta, String pregunta, String op1, String op2, String op3, String op4, String respuesta, String categoria, String dificultad) {
+    public Pregunta(Long id_pregunta, String pregunta, String op1, String op2, String op3, String op4, String respuesta, String categoria, String dificultad, boolean estado) {
         this.id_pregunta = id_pregunta;
         this.pregunta = pregunta;
         this.op1 = op1;
@@ -22,6 +23,10 @@ public class Pregunta {
         this.respuesta = respuesta;
         this.categoria = categoria;
         this.dificultad = dificultad;
+        this.estado = estado;
+    }
+
+    public Pregunta() {
 
     }
 
@@ -95,5 +100,13 @@ public class Pregunta {
 
     public void setDificultad(String dificultad) {
         this.dificultad = dificultad;
+    }
+
+    public boolean isEstado() {
+        return estado;
+    }
+
+    public void setEstado(boolean estado) {
+        this.estado = estado;
     }
 }

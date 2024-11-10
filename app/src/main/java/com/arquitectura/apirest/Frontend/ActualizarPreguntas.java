@@ -10,7 +10,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.arquitectura.apirest.R;
 
-public class QuizActivity extends AppCompatActivity {
+public class ActualizarPreguntas extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
