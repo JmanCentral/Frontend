@@ -15,9 +15,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.arquitectura.apirest.DAOS.DificultadCategoria;
 import com.arquitectura.apirest.Databsae.AppDatabase;
 import com.arquitectura.apirest.Entidades.Usuario;
 import com.arquitectura.apirest.R;
+import com.arquitectura.apirest.Room.UsuarioRoom;
+
+import java.util.List;
 
 import Utils.APIS;
 import Utils.UsuarioService;
@@ -123,6 +127,74 @@ public class Perfillogros extends AppCompatActivity {
             }
         });
     }
+
+
+
+    private void actualizarUsuarioPorHistorialEnRoom(String username) {
+        AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+        new Thread(() -> {
+            // Obtener el usuario de Room
+            UsuarioRoom usuario = db.usuarioDao().obtenerUsuarioPorUsername(username);
+
+            if (usuario != null) {
+                // Obtener datos de los historiales de usuario
+                Integer puntajeTotal = db.historialDao().getTotalPuntosDelUsuario(username);
+                Integer totalAyudas = db.historialDao().getTotalAyudasDelUsuario(username);
+                Integer tiempoTotal = db.historialDao().getTiempoTotalDelUsuario(username);
+                List<DificultadCategoria> dificultadesYCategorias = db.historialDao().obtenerDificultadYCategoriaPorUsuario(username);
+
+                // Actualizar nivel del usuario
+                if (puntajeTotal != null && puntajeTotal > 100) {
+                    usuario.setNivel("Experto");
+                } else {
+                    usuario.setNivel("Novato");
+                }
+
+                // Actualizar logros
+                if (tiempoTotal != null && tiempoTotal < 120) {
+                    usuario.setLogro1("Muy Rapido");
+                }
+
+                if (totalAyudas != null) {
+                    if (totalAyudas == 0) {
+                        usuario.setLogro2("Invencible");
+                    } else if (totalAyudas < 30) {
+                        usuario.setLogro2("Loser");
+                    }
+                }
+
+                // Verificar logros por categorías y dificultades específicas
+                if (verificarLogroPorCategoriaYDificultad(dificultadesYCategorias, "matematicas", "dificil")) {
+                    usuario.setLogro3("Aprende a las malas");
+                }
+                if (verificarLogroPorCategoriaYDificultad(dificultadesYCategorias, "geografia", "dificil")) {
+                    usuario.setLogro4("Conocedor");
+                }
+                if (verificarLogroPorCategoriaYDificultad(dificultadesYCategorias, "literatura", "dificil")) {
+                    usuario.setLogro5("Cosas de neruda");
+                }
+
+                // Actualizar el usuario en Room
+                db.usuarioDao().actualizarUsuario(usuario);
+
+                runOnUiThread(() -> Toast.makeText(Perfillogros.this, "Usuario actualizado en Room", Toast.LENGTH_SHORT).show());
+            } else {
+                runOnUiThread(() -> Toast.makeText(Perfillogros.this, "Usuario no encontrado en Room", Toast.LENGTH_SHORT).show());
+            }
+        }).start();
+    }
+
+    // Método auxiliar para verificar logros por categoría y dificultad
+    private boolean verificarLogroPorCategoriaYDificultad(List<DificultadCategoria> lista, String categoriaObjetivo, String dificultadObjetivo) {
+        for (DificultadCategoria item : lista) {
+            if (item.getDificultad().equals(dificultadObjetivo) && item.getCategoria().equals(categoriaObjetivo)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
     public void regresar2(View view) {
         Intent intent = new Intent(this, MenuActivity.class);

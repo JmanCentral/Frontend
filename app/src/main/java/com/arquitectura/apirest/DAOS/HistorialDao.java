@@ -30,4 +30,8 @@ public interface HistorialDao {
     @Query("SELECT SUM(h.tiempo) FROM historial h WHERE h.username = :username")
     Integer getTiempoTotalDelUsuario(String username);
 
+    @Query("SELECT dificultad, categoria FROM Historial WHERE username = :username")
+    List<DificultadCategoria> obtenerDificultadYCategoriaPorUsuario(String username);
+
+
 }

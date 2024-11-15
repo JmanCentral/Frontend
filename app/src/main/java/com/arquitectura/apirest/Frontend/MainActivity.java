@@ -57,12 +57,15 @@ public class MainActivity extends AppCompatActivity {
         appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "TriviaAPP").build();
 
         // Verificar si ya existe un usuario registrado
-        if (sharedPreferences.contains("username")) {
+        if (sharedPreferences.contains("username") && sharedPreferences.contains("ID")) {
             String savedUsername = sharedPreferences.getString("username", null);
-            if (savedUsername != null) {
+            long savedId = sharedPreferences.getLong("ID", -1); // Recuperar el ID
+
+            if (savedUsername != null && savedId != -1) {
                 Toast.makeText(this, "Bienvenido de nuevo, " + savedUsername, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, MenuActivity.class);
                 intent.putExtra("username", savedUsername);
+                intent.putExtra("ID", savedId); // Pasar el ID a la siguiente actividad
                 startActivity(intent);
                 finish();
             }

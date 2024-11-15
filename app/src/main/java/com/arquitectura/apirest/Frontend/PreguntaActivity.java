@@ -167,7 +167,7 @@ public class PreguntaActivity extends AppCompatActivity {
             // Marcar como false las preguntas en Room que no están en el conjunto de preguntas del servidor
             for (PreguntaRoom preguntaRoom : preguntasRoomExistentes) {
                 if (!preguntasServidorSet.contains(preguntaRoom.getPregunta())) {
-                    preguntaRoom.setEstado(false);
+                    preguntaRoom.setEstado(true);
                     db.preguntaDao().actualizarPregunta(preguntaRoom);
                 }
             }
@@ -186,23 +186,23 @@ public class PreguntaActivity extends AppCompatActivity {
                             pregunta.getRespuesta(),
                             pregunta.getDificultad(),
                             pregunta.getCategoria(),
-                            pregunta.isEstado()
+                            true
                     );
                     db.preguntaDao().insertarPregunta(nuevaPreguntaRoom);
                 } else {
+                    // Actualizar los datos de la pregunta existente y marcarla como true
                     preguntaExistente.setOp1(pregunta.getOp1());
                     preguntaExistente.setOp2(pregunta.getOp2());
                     preguntaExistente.setOp3(pregunta.getOp3());
                     preguntaExistente.setOp4(pregunta.getOp4());
                     preguntaExistente.setRespuesta(pregunta.getRespuesta());
                     preguntaExistente.setDificultad(pregunta.getDificultad());
-                    preguntaExistente.setEstado(pregunta.isEstado());
+                    preguntaExistente.setEstado(true); // Se marca como true
                     db.preguntaDao().actualizarPregunta(preguntaExistente);
                 }
             }
         }).start();
     }
-
 
 
     private List<Pregunta> convertirPreguntasRoomAPreguntas(List<PreguntaRoom> preguntasRoom) {

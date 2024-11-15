@@ -12,7 +12,7 @@ import com.arquitectura.apirest.Room.HistorialRoom;
 import com.arquitectura.apirest.Room.PreguntaRoom;
 import com.arquitectura.apirest.Room.UsuarioRoom;
 
-@Database(entities = {UsuarioRoom.class , PreguntaRoom.class , HistorialRoom.class},  version = 4)
+@Database(entities = {UsuarioRoom.class , PreguntaRoom.class , HistorialRoom.class},  version = 5)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract UsuarioDao usuarioDao();
