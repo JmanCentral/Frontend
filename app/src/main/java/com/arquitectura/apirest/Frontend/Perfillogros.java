@@ -53,7 +53,6 @@ public class Perfillogros extends AppCompatActivity {
         logro4TextView = findViewById(R.id.Logro4);
         logro5TextView = findViewById(R.id.Logro5);
 
-
         usuarioService = APIS.getUsuarioService();
         appDatabase = AppDatabase.getDatabase(getApplicationContext());
 
@@ -96,6 +95,7 @@ public class Perfillogros extends AppCompatActivity {
                     miImagen6.setImageResource(R.drawable.medalla);
 
                 } else {
+
                     Toast.makeText(Perfillogros.this, "Error al obtener datos del usuario", Toast.LENGTH_SHORT).show();
                 }
             }

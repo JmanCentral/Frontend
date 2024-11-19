@@ -63,7 +63,6 @@ public class PreguntaActivity extends AppCompatActivity {
     private long tiempoInicio;
     private long tiempoRestante = 10;
     private AppDatabase appDatabase;
-    SharedPreferences sharedPreferences;
 
 
     @SuppressLint("MissingInflatedId")
@@ -115,9 +114,8 @@ public class PreguntaActivity extends AppCompatActivity {
             public void onResponse(Call<List<Pregunta>> call, Response<List<Pregunta>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     preguntas = response.body();
-
                     guardarPreguntasEnRoom(preguntas);
-
+                    preguntas = obtenerPreguntasAleatorias(preguntas, 10);
                     mostrarPregunta();
                 } else {
                     Toast.makeText(PreguntaActivity.this, "No se encontraron preguntas en el servidor, cargando desde Room.", Toast.LENGTH_SHORT).show();
@@ -133,15 +131,24 @@ public class PreguntaActivity extends AppCompatActivity {
         });
     }
 
+    private List<Pregunta> obtenerPreguntasAleatorias(List<Pregunta> preguntas, int cantidad) {
+        Collections.shuffle(preguntas); // Desordena la lista
+        if (preguntas.size() > cantidad) {
+            return preguntas.subList(0, cantidad); // Selecciona las primeras 'cantidad' preguntas
+        }
+        return preguntas; // Retorna todas si son menos de 'cantidad'
+    }
+
+
 
     private void cargarPreguntasDesdeRoom() {
         AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
         new Thread(() -> {
-            // Solo obtener preguntas con estado true
             List<PreguntaRoom> preguntasRoom = db.preguntaDao().obtenerPreguntasPorCategoriaYDificultadConEstadoTrue(categoria, dificultad);
             runOnUiThread(() -> {
                 if (preguntasRoom != null && !preguntasRoom.isEmpty()) {
                     preguntas = convertirPreguntasRoomAPreguntas(preguntasRoom);
+                    preguntas = obtenerPreguntasAleatorias(preguntas, 10); // Obtener solo 10 preguntas
                     mostrarPregunta();
                 } else {
                     Toast.makeText(PreguntaActivity.this, "No hay preguntas disponibles en Room.", Toast.LENGTH_SHORT).show();
@@ -150,6 +157,8 @@ public class PreguntaActivity extends AppCompatActivity {
             });
         }).start();
     }
+
+
 
 
     // Método para guardar preguntas en Room
@@ -167,7 +176,7 @@ public class PreguntaActivity extends AppCompatActivity {
             // Marcar como false las preguntas en Room que no están en el conjunto de preguntas del servidor
             for (PreguntaRoom preguntaRoom : preguntasRoomExistentes) {
                 if (!preguntasServidorSet.contains(preguntaRoom.getPregunta())) {
-                    preguntaRoom.setEstado(true);
+                    preguntaRoom.setEstado(false);
                     db.preguntaDao().actualizarPregunta(preguntaRoom);
                 }
             }
@@ -186,7 +195,7 @@ public class PreguntaActivity extends AppCompatActivity {
                             pregunta.getRespuesta(),
                             pregunta.getDificultad(),
                             pregunta.getCategoria(),
-                            true
+                            pregunta.isEstado()
                     );
                     db.preguntaDao().insertarPregunta(nuevaPreguntaRoom);
                 } else {
@@ -197,7 +206,7 @@ public class PreguntaActivity extends AppCompatActivity {
                     preguntaExistente.setOp4(pregunta.getOp4());
                     preguntaExistente.setRespuesta(pregunta.getRespuesta());
                     preguntaExistente.setDificultad(pregunta.getDificultad());
-                    preguntaExistente.setEstado(true); // Se marca como true
+                    preguntaExistente.setEstado(pregunta.isEstado());
                     db.preguntaDao().actualizarPregunta(preguntaExistente);
                 }
             }
