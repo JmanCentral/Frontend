@@ -103,9 +103,51 @@ public class Perfillogros extends AppCompatActivity {
             @Override
             public void onFailure(Call<Usuario> call, Throwable t) {
                 Toast.makeText(Perfillogros.this, "Error de conexión", Toast.LENGTH_SHORT).show();
+                actualizarUsuarioPorHistorialEnRoom(username);
+                obtenerDatosDeRoom(username);
+
             }
         });
     }
+
+    private void obtenerDatosDeRoom(String username) {
+        new Thread(() -> {
+            UsuarioRoom usuarioLocal = appDatabase.usuarioDao().obtenerUsuarioPorUsername(username);
+
+            runOnUiThread(() -> {
+                if (usuarioLocal != null) {
+                    actualizarUI(usuarioLocal);
+                } else {
+                    Toast.makeText(Perfillogros.this, "Usuario no encontrado en Room", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }).start();
+    }
+
+    private void actualizarUI(UsuarioRoom usuario) {
+        ImageView miImagen = findViewById(R.id.miImagen);
+        ImageView miImagen2 = findViewById(R.id.miImagen2);
+        ImageView miImagen3 = findViewById(R.id.miImagen3);
+        ImageView miImagen4 = findViewById(R.id.miImagen4);
+        ImageView miImagen5 = findViewById(R.id.miImagen5);
+        ImageView miImagen6 = findViewById(R.id.miImagen6);
+
+        usernameTextView.setText(usuario.getUsername());
+        emailTextView.setText(usuario.getEmail());
+        nivelTextView.setText(usuario.getNivel());
+        logro1TextView.setText(usuario.getLogro1());
+        logro2TextView.setText(usuario.getLogro2());
+        logro3TextView.setText(usuario.getLogro3());
+        logro4TextView.setText(usuario.getLogro4());
+        logro5TextView.setText(usuario.getLogro5());
+        miImagen.setImageResource(R.drawable.taza);
+        miImagen2.setImageResource(R.drawable.medalla);
+        miImagen3.setImageResource(R.drawable.medalla);
+        miImagen4.setImageResource(R.drawable.medalla);
+        miImagen5.setImageResource(R.drawable.medalla);
+        miImagen6.setImageResource(R.drawable.medalla);
+    }
+
 
     private void modificarUsuario(String username) {
 
