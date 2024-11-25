@@ -87,53 +87,10 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/rules"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_margin="16dp"
-        android:layout_marginTop="16dp"
-        android:onClick="reglas"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/startQuiz">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/rules" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="30dp"
-                android:layout_weight="1"
-                android:text="Reglas"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
-
-        </LinearLayout>
-
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
         android:id="@+id/history"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_margin="16dp"
-        android:layout_marginTop="16dp"
         android:onClick="historial"
         app:cardCornerRadius="20dp"
         app:cardElevation="10dp"
@@ -141,7 +98,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rules">
+        app:layout_constraintTop_toBottomOf="@+id/startQuiz">
 
         <LinearLayout
             android:layout_width="wrap_content"

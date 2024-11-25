@@ -1,5 +1,6 @@
 package com.arquitectura.apirest.Entidades;
 
+
 public class Historial {
 
     private Long id;

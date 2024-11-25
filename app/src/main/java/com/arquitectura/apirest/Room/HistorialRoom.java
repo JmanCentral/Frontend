@@ -32,7 +32,6 @@ public class HistorialRoom {
     }
 
     public HistorialRoom() {
-        // Constructor sin argumentos
     }
 
     public Long getId() {
