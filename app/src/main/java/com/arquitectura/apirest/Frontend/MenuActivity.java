@@ -38,7 +38,6 @@ public class MenuActivity extends AppCompatActivity {
         helloUserName = findViewById(R.id.helloUserName);
 
         startQuiz = (CardView) findViewById(R.id.startQuiz);
-        rules = (CardView) findViewById(R.id.rules);
         history = (CardView) findViewById(R.id.history);
         editPassword = (CardView) findViewById(R.id.editPassword);
         logout = (CardView) findViewById(R.id.logout);
@@ -67,12 +66,6 @@ public class MenuActivity extends AppCompatActivity {
 
     }
 
-    public void reglas(View view) {
-
-
-        Intent intent = new Intent(this, ReglasActivity.class);
-        startActivity(intent);
-    }
 
     public void historial(View view) {
 
