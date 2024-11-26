@@ -8,12 +8,42 @@
     tools:context=".Frontend.Perfillogros">
 
     <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="135dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintStart_toEndOf="@+id/right"
+        app:layout_constraintTop_toBottomOf="@+id/imageView8">
+
+        <ImageView
+            android:id="@+id/miImagen"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
+            android:contentDescription="@string/descripcion_imagen" />
+
+        <ImageView
+            android:id="@+id/miImagen2"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
+            android:contentDescription="@string/descripcion_imagen" />
+
+        <ImageView
+            android:id="@+id/miImagen3"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
+            android:contentDescription="@string/descripcion_imagen" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="100dp"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintLeft_toRightOf="@id/left"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView8"
         tools:ignore="NotSibling">
@@ -80,13 +110,14 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="229dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="52dp"
+        android:layout_width="282dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="70dp"
         android:text="Historial de logros"
         android:textColor="#f63a98"
         android:textColorHint="#f63a98"
         android:textSize="25sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
@@ -96,12 +127,12 @@
         android:id="@+id/left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp"
         android:gravity="center|left"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/right"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView8">
 
         <TextView

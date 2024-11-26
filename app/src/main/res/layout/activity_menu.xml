@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:onClick="editarContrasena"
     tools:context=".Frontend.MenuActivity">
 
     <LinearLayout
@@ -176,6 +175,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_margin="16dp"
+        android:onClick="logrosusuario"
         app:cardCornerRadius="20dp"
         app:cardElevation="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -192,7 +192,7 @@
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/edit_password" />
+                android:src="@drawable/exito" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -200,7 +200,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="30dp"
                 android:layout_weight="1"
-                android:text="Editar contraseña"
+                android:text="Logros"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
