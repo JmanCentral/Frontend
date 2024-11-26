@@ -226,7 +226,6 @@ public class Perfillogros extends AppCompatActivity {
         }).start();
     }
 
-    // Método auxiliar para verificar logros por categoría y dificultad
     private boolean verificarLogroPorCategoriaYDificultad(List<DificultadCategoria> lista, String categoriaObjetivo, String dificultadObjetivo) {
         for (DificultadCategoria item : lista) {
             if (item.getDificultad().equals(dificultadObjetivo) && item.getCategoria().equals(categoriaObjetivo)) {
